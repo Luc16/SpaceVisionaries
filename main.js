@@ -1,26 +1,51 @@
 import * as THREE from 'three';
-import PlanetThree from PlanetThree
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+import { SolarSystem } from './solar_system.js';
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const main = function() {
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+	const scene = new THREE.Scene();
+	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.0000001, 1000 );
 
-const earth = new PlanetThree(scene, 15, 'resources/earth_texture.jpg');
+	const renderer = new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+	
+	const solarSystem = new SolarSystem(scene)
 
+	const controls = new OrbitControls( camera, renderer.domElement );
 
-camera.position.z = 5;
+	
+	camera.position.z = 0.05;
 
-function animate() {
-	requestAnimationFrame( animate );
+	controls.update()
 
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
+	controls.keys = {
+		LEFT: 'ArrowLeft', //left arrow
+		UP: 'ArrowUp', // up arrow
+		RIGHT: 'ArrowRight', // right arrow
+		BOTTOM: 'ArrowDown' // down arrow
+	}
 
-	renderer.render( scene, camera );
+	var then = 0;
+	function animate(now) {
+		requestAnimationFrame(animate);
+
+		now *= 0.001;
+		var deltaTime = now - then;
+		if (!deltaTime) {
+			deltaTime = 0
+		}
+		then = now;
+
+		controls.update()
+
+		renderer.render(scene, camera);
+
+	};
+	
+	animate();
 }
 
-animate();
+main()
