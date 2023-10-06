@@ -100,6 +100,7 @@ class Planet {
         mat4.identity(worldMatrix);
     }
 
+
     translate(vec, scalar) {
         addTo(this.translation, vec, scalar);
     }

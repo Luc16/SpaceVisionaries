@@ -165,7 +165,7 @@ var InitDemo = function () {
 	// 
 	let program = createShaders(gl);
 
-	//
+	// 
 	// Create buffer
 	//
 	var sphere = createSphere(50);
@@ -190,9 +190,6 @@ var InitDemo = function () {
 	gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 	gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, camera.viewMatrix);
 	gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, camera.projMatrix);
-
-	var xRotationMatrix = new Float32Array(16);
-	var yRotationMatrix = new Float32Array(16);
 
 	//
 	// Main render loop
