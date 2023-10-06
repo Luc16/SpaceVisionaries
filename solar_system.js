@@ -2,7 +2,7 @@ import { Planet } from './planet.js';
 
 export class SolarSystem {
     constructor(scene) {
-        const sunRadius =  0.0093/2;
+        const sunRadius =  0.93/2; //TODO: Radio multiplicado por 100
 
         const mercuryRadius = 0.0035*sunRadius;
         const venusRadius = 0.0087*sunRadius;

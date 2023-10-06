@@ -17,7 +17,7 @@ const main = function() {
 	const controls = new OrbitControls( camera, renderer.domElement );
 
 	
-	camera.position.z = 0.05;
+	camera.position.z = 5;
 
 	controls.update()
 
