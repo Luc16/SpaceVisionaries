@@ -174,6 +174,10 @@ var InitDemo = function () {
 	var moon = new Planet(gl, program, sphere, 0.5, "http://localhost:8000/moon_texture.jpg");
 	moon.translate([3, 0, 0]);
 
+	var sun = new Planet(gl, program, sphere, 10, "http://localhost:8000/moon_texture.jpg");
+	sun.translate([0, 0,15]);
+
+
 	// Tell OpenGL state machine which program should be active.
 	gl.useProgram(program);
 
@@ -223,6 +227,9 @@ var InitDemo = function () {
 		moon.rotation[2] += 3*angle;
 		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, moon.getModelMatrix());
 		moon.render(gl)
+
+		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, sun.getModelMatrix());
+		sun.render(gl)
 
 		requestAnimationFrame(loop);
 	};
