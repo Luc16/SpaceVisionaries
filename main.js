@@ -3,22 +3,20 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import { SolarSystem } from './solar_system.js';
 
-const main = function() {
+const main = function () {
 
 	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.0000001, 1000 );
+	const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.0000001, 1000);
 
 	const renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
-	
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+
 	const solarSystem = new SolarSystem(scene)
 
-	const controls = new OrbitControls( camera, renderer.domElement );
+	const controls = new OrbitControls(camera, renderer.domElement);
 
-	
 	camera.position.z = 5;
-
 	controls.update()
 
 	controls.keys = {
@@ -27,6 +25,8 @@ const main = function() {
 		RIGHT: 'ArrowRight', // right arrow
 		BOTTOM: 'ArrowDown' // down arrow
 	}
+
+	solarSystem.drawOrbits(scene);
 
 	var then = 0;
 	function animate(now) {
@@ -44,7 +44,7 @@ const main = function() {
 		renderer.render(scene, camera);
 
 	};
-	
+
 	animate();
 }
 
