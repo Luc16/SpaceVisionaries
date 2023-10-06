@@ -215,12 +215,12 @@ var InitDemo = function () {
 		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
 		angle = deltaTime / 6 * 2 * Math.PI;
-		earth.rotate(angle, [0, 1, 0]);
-		earth.rotate(angle/4, [1, 0, 0]);
+		earth.rotation[1] += angle;
+		earth.rotation[0] += angle/4;
 		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, earth.getModelMatrix());
 		earth.render(gl);
 
-		moon.rotate(3*angle, [0, 0, 1]);
+		moon.rotation[2] += 3*angle;
 		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, moon.getModelMatrix());
 		moon.render(gl)
 

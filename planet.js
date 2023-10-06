@@ -1,6 +1,8 @@
 class Planet {
     constructor(gl, program, sphere, scale, textureFile) {
         this.sphere = sphere;
+        this.translation = [0, 0, 0];
+        this.rotation = [0, 0, 0];
         this.modelMatrix = new Float32Array(16);
         mat4.identity(this.modelMatrix);
         this.scale = scale;
@@ -65,21 +67,41 @@ class Planet {
     }
 
     getModelMatrix(){
-        var model = new Float32Array(16);
-        mat4.scale(model, this.modelMatrix, [this.scale, this.scale, this.scale]);
-        return model;
+        const c3 = Math.cos(this.rotation[2]);
+        const s3 = Math.sin(this.rotation[2]);
+        const c2 = Math.cos(this.rotation[0]);
+        const s2 = Math.sin(this.rotation[0]);
+        const c1 = Math.cos(this.rotation[1]);
+        const s1 = Math.sin(this.rotation[1]);
+        return new Float32Array(
+            [
+                this.scale * (c1 * c3 + s1 * s2 * s3),
+                this.scale * (c2 * s3),
+                this.scale * (c1 * s2 * s3 - c3 * s1),
+                0.0,
+      
+      
+                this.scale * (c3 * s1 * s2 - c1 * s3),
+                this.scale * (c2 * c3),
+                this.scale * (c1 * c3 * s2 + s1 * s3),
+                0.0,
+            
+                this.scale * (c2 * s1),
+                this.scale * (-s2),
+                this.scale * (c1 * c2),
+                0.0,
+            
+                this.translation[0], this.translation[1], this.translation[2], 1.0
+            ]
+        )
     }
 
     resetMatrix(){
         mat4.identity(worldMatrix);
     }
 
-    rotate(angle, axis){
-        mat4.rotate(this.modelMatrix, this.modelMatrix, angle, axis);
-    }
-
-    translate(vec) {
-        mat4.translate(this.modelMatrix, this.modelMatrix, vec);
+    translate(vec, scalar) {
+        addTo(this.translation, vec, scalar);
     }
 
     render(gl) {
