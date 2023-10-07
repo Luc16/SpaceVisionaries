@@ -4,6 +4,7 @@ import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/js
 import { SolarSystem } from './solar_system.js';
 import { Planet } from './planet.js';
 import { Satellite } from './satellite_class.js';
+import { Vector3 } from "three";
 
 
 const updateObjects = function(satellite, mars, dt) {
@@ -12,7 +13,7 @@ const updateObjects = function(satellite, mars, dt) {
 								.normalize()
 								.multiplyScalar(1000/(satellite.pos.distanceToSquared(mars.pos)))
 	
-	satellite.vel = satellite.acc.clone().multiplyScalar(dt)
+	satellite.vel.add(satellite.acc.clone().multiplyScalar(dt))
 
 	satellite.pos.add(satellite.vel.clone().multiplyScalar(dt))
 	if (satellite.pos.distanceToSquared(mars.pos) < mars.radius*mars.radius) {
@@ -25,14 +26,32 @@ const updateObjects = function(satellite, mars, dt) {
 	}
 }
 
+const setArrowToVel = function(satellite, arrow) {
+	arrow.position.copy(satellite.pos.clone())
+	arrow.setDirection(satellite.vel.clone().normalize())
+	arrow.setLength(satellite.vel.clone().length())
+}
+
 const main = async function() {
+	var simRunning = false
 
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 	const satellite = new Satellite([0, 0, 0], [0, 0, 0]);
 	await satellite.loadModel(scene, 0.1, "resources/satellite/scene.gltf")
-	satellite.object.position.x -= 6
+	satellite.vel = new THREE.Vector3(1, 10, 0)
+	satellite.pos = new THREE.Vector3(-6, 0, 0)
+
+	document.addEventListener('keydown', (event) => {
+		var name = event.key;
+		var code = event.code;
+		if (event.code == 'Space') {
+			simRunning = !simRunning
+		}
+		// Alert the key name and key code on keydown
+		// alert(`Key pressed ${name} \r\n Key code value: ${code}`);
+	  }, false);
 
 	const renderer = new THREE.WebGLRenderer({ alpha: true }); 
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -41,7 +60,6 @@ const main = async function() {
 	camera.position.z = 5;
 
 	var mars = new Planet(scene, 2, "resources/textures/mars_texture.jpg");
-	mars.translate([0, 0, 0])
 	
 	const topLight = new THREE.DirectionalLight(0xffffff, 5); // (color, intensity)
 	topLight.position.set(100, 100, 100) //top-left-ish
@@ -50,6 +68,9 @@ const main = async function() {
 
 	const ambientLight = new THREE.AmbientLight(0x333333, 5);
 	scene.add(ambientLight);
+
+	var arrowHelper = new THREE.ArrowHelper(satellite.vel.clone().normalize(), satellite.pos.clone(), satellite.vel.clone().length(), 0xff0000 );
+	scene.add( arrowHelper );
 
 	var controls = new OrbitControls(camera, renderer.domElement);
 
@@ -71,8 +92,11 @@ const main = async function() {
 		}
 		then = now;
 
-		updateObjects(satellite, mars, deltaTime)
-
+		if (simRunning) {		
+			updateObjects(satellite, mars, deltaTime)
+			setArrowToVel(satellite, arrowHelper)
+		
+		}
 		renderer.render(scene, camera);
 
 	};

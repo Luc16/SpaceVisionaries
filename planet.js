@@ -4,7 +4,7 @@ export class Planet{
     constructor(scene, radius, texturePath){
 
         //initializing material
-        this.material = new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load(texturePath)});
+        this.material = new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load(texturePath)});
             
 
         this.geometry = new THREE.SphereGeometry( radius, 50, 50); 
