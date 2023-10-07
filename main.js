@@ -2,7 +2,28 @@ import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module
 import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
 
 import { SolarSystem } from './solar_system.js';
+import { Planet } from './planet.js';
 import { Satellite } from './satellite_class.js';
+
+
+const updateObjects = function(satellite, mars, dt) {
+	satellite.acc = mars.pos.clone()
+								.sub(satellite.pos)
+								.normalize()
+								.multiplyScalar(1000/(satellite.pos.distanceToSquared(mars.pos)))
+	
+	satellite.vel = satellite.acc.clone().multiplyScalar(dt)
+
+	satellite.pos.add(satellite.vel.clone().multiplyScalar(dt))
+	if (satellite.pos.distanceToSquared(mars.pos) < mars.radius*mars.radius) {
+		satellite.acc = new THREE.Vector3(0, 0, 0)
+		satellite.vel = new THREE.Vector3(0, 0, 0)
+		satellite.pos = mars.pos.clone()
+			.sub(satellite.pos)
+			.normalize()
+			.multiplyScalar(-(mars.radius))
+	}
+}
 
 const main = async function() {
 
@@ -11,15 +32,17 @@ const main = async function() {
 
 	const satellite = new Satellite([0, 0, 0], [0, 0, 0]);
 	await satellite.loadModel(scene, 0.1, "resources/satellite/scene.gltf")
+	satellite.object.position.x -= 6
+
 	const renderer = new THREE.WebGLRenderer({ alpha: true }); 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	document.getElementById("container3D").appendChild(renderer.domElement);
 	camera.position.z = 5;
 
+	var mars = new Planet(scene, 2, "resources/textures/mars_texture.jpg");
+	mars.translate([0, 0, 0])
 	
-	const solarSystem = new SolarSystem(scene)
-
 	const topLight = new THREE.DirectionalLight(0xffffff, 5); // (color, intensity)
 	topLight.position.set(100, 100, 100) //top-left-ish
 	topLight.castShadow = true;
@@ -39,7 +62,6 @@ const main = async function() {
 	var then = 0;
 	function animate(now) {
 		requestAnimationFrame(animate);
-		satellite.object.position.x -= 0.01
 
 
 		now *= 0.001;
@@ -48,6 +70,8 @@ const main = async function() {
 			deltaTime = 0
 		}
 		then = now;
+
+		updateObjects(satellite, mars, deltaTime)
 
 		renderer.render(scene, camera);
 

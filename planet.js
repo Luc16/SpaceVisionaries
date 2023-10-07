@@ -9,6 +9,7 @@ export class Planet{
 
         this.geometry = new THREE.SphereGeometry( radius, 50, 50); 
         this.sphere = new THREE.Mesh( this.geometry, this.material ); 
+        this.radius = radius
         scene.add( this.sphere );
 
     }
@@ -19,5 +20,14 @@ export class Planet{
         this.sphere.translateZ(vec[2]);
     }
 
+    get pos() {
+        return this.sphere.position
+    }
+
+    set pos(vec) {
+        this.sphere.position.x = vec.x
+        this.sphere.position.y = vec.y
+        this.sphere.position.z = vec.z
+    }
 
 }

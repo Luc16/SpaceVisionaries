@@ -18,4 +18,14 @@ export class Satellite{
       scene.add(this.object)
 
     }
+
+    get pos() {
+      return this.object.position
+    }
+
+    set pos(vec) {
+      this.object.position.x = vec.x
+      this.object.position.y = vec.y
+      this.object.position.z = vec.z
+  }
 }
