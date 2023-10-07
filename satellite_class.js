@@ -3,7 +3,7 @@ import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/l
 
 export class Satellite{
     constructor(vel, acc){
-        this.vel = new THREE.Vector3(vel);
+        this.velocity = new THREE.Vector3(vel);
         this.acc = new THREE.Vector3(acc);
 
         this.object = null;
@@ -27,5 +27,15 @@ export class Satellite{
       this.object.position.x = vec.x
       this.object.position.y = vec.y
       this.object.position.z = vec.z
-  }
+    }
+
+    get vel() {
+      return this.velocity
+    }
+
+    set vel(vec) {
+      this.velocity.x = vec.x
+      this.velocity.y = vec.y
+      this.velocity.z = vec.z
+    }
 }

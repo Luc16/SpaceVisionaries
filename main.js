@@ -34,6 +34,12 @@ const setArrowToVel = function(satellite, arrow) {
 	arrow.setLength(satellite.vel.clone().length()/10)
 }
 
+const resetSatellite = function (satellite, resetPos, resetVel) {
+	satellite.vel = resetVel.clone()
+	satellite.pos = resetPos.clone()
+	satellite.acc = new THREE.Vector3(0, 0, 0)
+}
+
 const main = async function() {
 	var simRunning = false
 
@@ -43,38 +49,41 @@ const main = async function() {
 	const satellite = new Satellite([0, 0, 0], [0, 0, 0]);
 	await satellite.loadModel(scene, 0.1, "resources/satellite/scene.gltf")
 	
-  satellite.vel = new THREE.Vector3(1, 10, 0)
-	satellite.pos = new THREE.Vector3(-6, 0, 0)
+	var resetPos = new THREE.Vector3(-6, 0, 0)
+	var resetVel = new THREE.Vector3(1, 10, 0)
+	resetSatellite(satellite, resetPos, resetVel);
 
-  const gui = new GUI()
-  gui.add(satellite.pos, "x", -50, 50, 0.01).name("Initial X position")
-  gui.add(satellite.pos, "y", -50, 50, 0.01).name("Initial Y position")
-  gui.add(satellite.pos, "z", -50, 50, 0.01).name("Initial Z position")
+	const gui = new GUI()
+	gui.add(satellite.pos, "x", -50, 50, 0.01).name("Position X").listen()
+	gui.add(satellite.pos, "y", -50, 50, 0.01).name("Position Y").listen()
+	gui.add(satellite.pos, "z", -50, 50, 0.01).name("Position Z").listen()
 
-  
+	gui.add(satellite.vel, "x", -50, 50, 0.01).name("Velocity X").listen()
+	gui.add(satellite.vel, "y", -50, 50, 0.01).name("Velocity Y").listen()
+	gui.add(satellite.vel, "z", -50, 50, 0.01).name("Velocity Z").listen()
 
 
+	window.onblur = function(ev){
+		simRunning = false;
+	}
 
+	window.onfocus = function(ev){
+		simRunning = true;
+	}
 
 	document.addEventListener('keydown', (event) => {
-		var name = event.key;
-		var code = event.code;
-    console.log(satellite.pos)
 		if (event.code == 'Space') {
+			if (!simRunning){
+				resetVel = satellite.vel.clone()
+			}
 			simRunning = !simRunning
-      
+		} 
+		else if (event.key == 'r') {
+			resetSatellite(satellite, resetPos, resetVel)
+			simRunning = false
 		}
-
-    window.onblur = function(ev){
-      simRunning = false;
-    }
-
-    window.onfocus = function(ev){
-      simRunning = true;
-    }
-		// Alert the key name and key code on keydown
-		// alert(`Key pressed ${name} \r\n Key code value: ${code}`);
-	  }, false);
+	
+	}, false);
 
 	const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); 
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -112,15 +121,15 @@ const main = async function() {
 		if (!deltaTime) {
 			deltaTime = 0
 		}
-    else if (deltaTime > 0.1){
-      deltaTime = 1/60;
-    }
+		else if (deltaTime > 0.1){
+		deltaTime = 1/60;
+		}
 		then = now;
 
 		if (simRunning) {		
 			updateObjects(satellite, mars, deltaTime)    
 		} 
-    setArrowToVel(satellite, arrowHelper)
+    	setArrowToVel(satellite, arrowHelper)
 
     
 		renderer.render(scene, camera);
