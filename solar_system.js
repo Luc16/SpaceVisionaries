@@ -63,6 +63,10 @@ export class SolarSystem {
 
     }
 
+    getPlanets() {
+        return this.planets;
+    }
+
     drawOrbits(scene) {
         this.orbits.push(new BasicOrbit(scene, this.sunMercuryDist, this.sunMercuryDist, 0, 0));
         this.orbits.push(new BasicOrbit(scene, this.sunVenusDist, this.sunVenusDist, 0, 0));
@@ -72,5 +76,10 @@ export class SolarSystem {
         this.orbits.push(new BasicOrbit(scene, this.sunSaturnDist, this.sunSaturnDist, 0, 0));
         this.orbits.push(new BasicOrbit(scene, this.sunUranusDist, this.sunUranusDist, 0, 0));
         this.orbits.push(new BasicOrbit(scene, this.sunNeptuneDist, this.sunNeptuneDist, 0, 0));
-    } 
+    }
+
+    move() {
+        console.log(this.orbits[0].getPoints().length);
+        console.log(this.orbits[1].getPoints().length);
+    }
 }

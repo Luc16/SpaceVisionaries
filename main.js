@@ -18,7 +18,7 @@ const main = function () {
 	const controls = new OrbitControls(camera, renderer.domElement);
 
 	camera.position.z = 5;
-	controls.update()
+	controls.update();
 
 	controls.keys = {
 		LEFT: 'ArrowLeft', //left arrow
@@ -26,6 +26,8 @@ const main = function () {
 		RIGHT: 'ArrowRight', // right arrow
 		BOTTOM: 'ArrowDown' // down arrow
 	}
+
+	controls.listenToKeyEvents(window);
 
 	var then = 0;
 	function animate(now) {
