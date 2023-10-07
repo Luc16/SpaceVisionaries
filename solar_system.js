@@ -77,7 +77,7 @@ export class SolarSystem {
         this.orbits.push(new BasicOrbit(scene, this.sunJupiterDist, this.sunJupiterDist, 0, 0));
         this.orbits.push(new BasicOrbit(scene, this.sunSaturnDist, this.sunSaturnDist, 0, 0));
         this.orbits.push(new BasicOrbit(scene, this.sunUranusDist, this.sunUranusDist, 0, 0));
-        this.orbits.push(new BasicOrbit(scene, this.sunNeptuneDist, this.sunNeptuneDist+5, 5, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunNeptuneDist, this.sunNeptuneDist, 0, 0));
     }
 
     move() {

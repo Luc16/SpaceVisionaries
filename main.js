@@ -1,8 +1,8 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
 import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
-import { EffectComposer } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/EffectComposer';
-import { FXAAShader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/shaders/FXAAShader.js';
-import { RenderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/RenderPass';
+import { EffectComposer } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/EffectComposer';
+import { SSAARenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/SSAARenderPass.js';
+import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
 import { ColorCorrectionShader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/shaders/ColorCorrectionShader.js';
 
@@ -23,18 +23,15 @@ const main = function () {
 	renderPass.clearAlpha = 0;
 
 
-	const fxaaPass = new ShaderPass(FXAAShader);
+	const ssaaRenderPass = new SSAARenderPass( scene, camera );	
 	const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
-
 	const composer = new EffectComposer(renderer);
 
-	const pixelRatio = renderer.getPixelRatio();
-	fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerWidth * pixelRatio);
-	fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerHeight * pixelRatio);
+	ssaaRenderPass.sampleLevel = 4;
 
 	composer.addPass(renderPass);
 	composer.addPass(colorCorrectionPass);
-	composer.addPass(fxaaPass);
+	composer.addPass(ssaaRenderPass);
 
 
 	const solarSystem = new SolarSystem(scene)
