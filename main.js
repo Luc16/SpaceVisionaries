@@ -11,8 +11,8 @@ const scene = new THREE.Scene();
 //create a new camera with positions and angles
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-var satellite = new SatelliteModel(scene, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+const satellite = new SatelliteModel(scene, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+await satellite.loadModel(scene, "resources/satellite/scene.gltf")
 //Instantiate a new renderer and set its size
 const renderer = new THREE.WebGLRenderer({ alpha: true }); //Alpha: true allows for the transparent background
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -39,6 +39,7 @@ var controls = new OrbitControls(camera, renderer.domElement);
 //Render the scene
 function animate() {
   requestAnimationFrame(animate);
+  satellite.object.position.x += 0.01
   //Here we could add some code to update the scene, adding some automatic movement
   renderer.render(scene, camera);
 }

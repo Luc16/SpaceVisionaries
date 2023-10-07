@@ -6,25 +6,15 @@ export class SatelliteModel{
         this.vel = new VectorImpl(velx, vely, velz);
         this.acc = new VectorImpl(ax, ay, az);
 
-        var object;
+        this.object = null;
 
-        const loader = new GLTFLoader();
-        loader.load(
-            `resources/satellite/scene.gltf`,
-            function (gltf) {
-              //If the file is loaded, add it to the scene
-              object = gltf.scene;
-              scene.add(object);
-            },
-            function (xhr) {
-              //While it is loading, log the progress
-              console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-            },
-            function (error) {
-              //If there is an error, log it
-              console.error(error);
-            }
-          );
-        
+    }
+
+    async loadModel(scene, modelPath){
+      const loader = new GLTFLoader();
+      const giltf = await loader.loadAsync( modelPath )
+      this.object = giltf.scene;
+      scene.add(this.object)
+
     }
 }
