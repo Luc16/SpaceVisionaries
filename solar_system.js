@@ -64,13 +64,13 @@ export class SolarSystem {
     }
 
     drawOrbits(scene) {
-        this.orbits.push(new BasicOrbit(scene, this.sunMercuryDist, this.sunMercuryDist));
-        this.orbits.push(new BasicOrbit(scene, this.sunVenusDist, this.sunVenusDist));
-        this.orbits.push(new BasicOrbit(scene, this.sunEarthDist, this.sunEarthDist));
-        this.orbits.push(new BasicOrbit(scene, this.sunMarsDist, this.sunMarsDist));
-        this.orbits.push(new BasicOrbit(scene, this.sunJupiterDist, this.sunJupiterDist));
-        this.orbits.push(new BasicOrbit(scene, this.sunSaturnDist, this.sunSaturnDist));
-        this.orbits.push(new BasicOrbit(scene, this.sunUranusDist, this.sunUranusDist));
-        this.orbits.push(new BasicOrbit(scene, this.sunNeptuneDist, this.sunNeptuneDist));
+        this.orbits.push(new BasicOrbit(scene, this.sunMercuryDist, this.sunMercuryDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunVenusDist, this.sunVenusDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunEarthDist, this.sunEarthDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunMarsDist, this.sunMarsDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunJupiterDist, this.sunJupiterDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunSaturnDist, this.sunSaturnDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunUranusDist, this.sunUranusDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunNeptuneDist, this.sunNeptuneDist, 0, 0));
     } 
 }
