@@ -1,5 +1,4 @@
-import * as THREE from 'three';
-
+import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
 
 export class Planet{
     constructor(scene, radius, texturePath){

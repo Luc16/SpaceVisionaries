@@ -1,36 +1,46 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
 
 import { SolarSystem } from './solar_system.js';
+import { Satellite } from './satellite_class.js';
 
-const main = function() {
+const main = async function() {
 
 	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.0000001, 1000 );
+	const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-	const renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	const satellite = new Satellite([0, 0, 0], [0, 0, 0]);
+	await satellite.loadModel(scene, 0.1, "resources/satellite/scene.gltf")
+	const renderer = new THREE.WebGLRenderer({ alpha: true }); 
+	renderer.setSize(window.innerWidth, window.innerHeight);
+
+	document.getElementById("container3D").appendChild(renderer.domElement);
+	camera.position.z = 5;
+
 	
 	const solarSystem = new SolarSystem(scene)
 
-	const controls = new OrbitControls( camera, renderer.domElement );
+	const topLight = new THREE.DirectionalLight(0xffffff, 5); // (color, intensity)
+	topLight.position.set(100, 100, 100) //top-left-ish
+	topLight.castShadow = true;
+	scene.add(topLight);
 
-	
-	camera.position.z = 5;
+	const ambientLight = new THREE.AmbientLight(0x333333, 5);
+	scene.add(ambientLight);
 
-	controls.update()
+	var controls = new OrbitControls(camera, renderer.domElement);
 
-	controls.keys = {
-		LEFT: 'ArrowLeft', //left arrow
-		UP: 'ArrowUp', // up arrow
-		RIGHT: 'ArrowRight', // right arrow
-		BOTTOM: 'ArrowDown' // down arrow
-	}
+	window.addEventListener("resize", function () {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+	  });
 
 	var then = 0;
 	function animate(now) {
 		requestAnimationFrame(animate);
+		satellite.object.position.x -= 0.01
+
 
 		now *= 0.001;
 		var deltaTime = now - then;
@@ -39,8 +49,6 @@ const main = function() {
 		}
 		then = now;
 
-		controls.update()
-
 		renderer.render(scene, camera);
 
 	};
@@ -48,4 +56,4 @@ const main = function() {
 	animate();
 }
 
-main()
+await main()
