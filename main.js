@@ -40,6 +40,8 @@ const main = function () {
 		}
 		then = now;
 
+		solarSystem.move();
+
 		controls.update()
 
 		renderer.render(scene, camera);

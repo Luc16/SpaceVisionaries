@@ -6,14 +6,14 @@ export class SolarSystem {
     constructor(scene) {
         const sunRadius =  0.93/2; //TODO: Radio multiplicado por 100
 
-        const mercuryRadius = 0.0035*sunRadius;
-        const venusRadius = 0.0087*sunRadius;
-        const earthRadius = 0.0092*sunRadius;
-        const marsRadius = 0.0049*sunRadius;
-        const jupiterRadius = 0.1028*sunRadius;
-        const saturnRadius = 0.0866*sunRadius;
-        const uranusRadius = 0.0367*sunRadius;
-        const neptuneRadius = 0.0356*sunRadius;
+        const mercuryRadius = 0.0035*sunRadius*10;
+        const venusRadius = 0.0087*sunRadius*10;
+        const earthRadius = 0.0092*sunRadius*10;
+        const marsRadius = 0.0049*sunRadius*10;
+        const jupiterRadius = 0.1028*sunRadius*10;
+        const saturnRadius = 0.0866*sunRadius*10;
+        const uranusRadius = 0.0367*sunRadius*10;
+        const neptuneRadius = 0.0356*sunRadius*10;
 
         this.sunMercuryDist = 0.39;
         this.sunVenusDist = 0.72;
@@ -26,6 +26,8 @@ export class SolarSystem {
 
         this.planets = [];
         this.orbits = [];
+
+        this.currentPosition = 0;
 
         var sun = new Planet(scene, sunRadius, "resources/textures/sun_texture.jpg");
 	
@@ -75,11 +77,21 @@ export class SolarSystem {
         this.orbits.push(new BasicOrbit(scene, this.sunJupiterDist, this.sunJupiterDist, 0, 0));
         this.orbits.push(new BasicOrbit(scene, this.sunSaturnDist, this.sunSaturnDist, 0, 0));
         this.orbits.push(new BasicOrbit(scene, this.sunUranusDist, this.sunUranusDist, 0, 0));
-        this.orbits.push(new BasicOrbit(scene, this.sunNeptuneDist, this.sunNeptuneDist, 0, 0));
+        this.orbits.push(new BasicOrbit(scene, this.sunNeptuneDist, this.sunNeptuneDist+5, 5, 0));
     }
 
     move() {
-        console.log(this.orbits[0].getPoints().length);
-        console.log(this.orbits[1].getPoints().length);
+        let numPoints = this.orbits[0].getPoints().length;
+        for (let i = 0; i < this.planets.length; i++) {
+            let oldPosition = this.planets[i].getPosition().toArray();
+            let newPosition = this.orbits[i].getPoint(this.currentPosition).toArray();
+            this.planets[i].translate([newPosition[0] - oldPosition[0], oldPosition[1], newPosition[1] - oldPosition[2]]);
+            console.log(newPosition);
+        }
+        this.currentPosition += 0.0001;
+
+        if (this.currentPosition >= 1) {
+            this.currentPosition = 0;
+        }
     }
 }
