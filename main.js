@@ -28,18 +28,10 @@ const updateObjects = function(satellite, planets, dt) {
 		if (satellite.pos.distanceToSquared(planet.pos) <= planet.radius*planet.radius) {
 			satellite.acc = new THREE.Vector3(0, 0, 0)
 			satellite.vel = new THREE.Vector3(0, 0, 0)
-			if (planet.radius == 0.8) {
-				console.log(planet.radius + " " + satellite.pos.distanceToSquared(planets[0].pos) + " " + satellite.pos.distanceToSquared(planet.pos));				
-			}
 			satellite.pos = planet.pos.clone().add(planet.pos.clone()
 				.sub(satellite.pos)
 				.normalize()
 				.multiplyScalar(-(planet.radius)))
-
-			if (planet.radius == 0.8) {
-				console.log(planet.radius)
-				console.log(satellite.pos);				
-			}
 		}
 	}
 	
