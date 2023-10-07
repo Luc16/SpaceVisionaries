@@ -3,7 +3,7 @@ import { BasicOrbit } from './basic_orbit.js';
 
 
 export class SolarSystem {
-    constructor(scene) {
+    constructor(document, scene) {
         const sunscale = 100;
         const scale = 1000;
         const sunRadius =  4.6524e-3 * sunscale; //TODO: Radio multiplicado por 100
@@ -31,30 +31,30 @@ export class SolarSystem {
 
         this.currentPosition = 0;
 
-        var sun = new Planet(scene, sunRadius, "resources/textures/sun_texture.jpg");
+        var sun = new Planet(document, scene, "Sun", sunRadius, "resources/textures/sun_texture.jpg");
 	
-        var mercury = new Planet(sun.getMesh(), mercuryRadius, "resources/textures/mercury_texture.jpg", 0.0008);
+        var mercury = new Planet(document, scene, "Mercury", mercuryRadius, "resources/textures/mercury_texture.jpg", 0.0008);
         this.planets.push(mercury);
 
-        var venus = new Planet(sun.getMesh(), venusRadius, "resources/textures/venus_texture.jpg", 0.00065);
+        var venus = new Planet(document, scene, "Venus", venusRadius, "resources/textures/venus_texture.jpg", 0.00065);
         this.planets.push(venus);
 
-        var earth = new Planet(sun.getMesh(), earthRadius, "resources/textures/earth_texture.jpg", 0.0006);
+        var earth = new Planet(document, scene, "Earth", earthRadius, "resources/textures/earth_texture.jpg", 0.0006);
         this.planets.push(earth);
 
-        var mars = new Planet(scene, marsRadius, "resources/textures/mars_texture.jpg", 0.0005);
+        var mars = new Planet(document, scene, "Mars", marsRadius, "resources/textures/mars_texture.jpg", 0.0005);
         this.planets.push(mars);
 
-        var jupiter = new Planet(scene, jupiterRadius, "resources/textures/jupiter_texture.jpg", 0.00025);
+        var jupiter = new Planet(document, scene, "Jupiter", jupiterRadius, "resources/textures/jupiter_texture.jpg", 0.00025);
         this.planets.push(jupiter);
 
-        var saturn = new Planet(scene, saturnRadius, "resources/textures/saturn_texture.jpg", 0.0002);
+        var saturn = new Planet(document, scene, "Saturn", saturnRadius, "resources/textures/saturn_texture.jpg", 0.0002);
         this.planets.push(saturn);
 
-        var uranus = new Planet(scene, uranusRadius, "resources/textures/uranus_texture.jpg", 0.00015);
+        var uranus = new Planet(document, scene, "Uranus", uranusRadius, "resources/textures/uranus_texture.jpg", 0.00015);
         this.planets.push(uranus);
 
-        var neptune = new Planet(scene, neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001);
+        var neptune = new Planet(document, scene, "Neptune", neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001);
         this.planets.push(neptune);
 
     }
