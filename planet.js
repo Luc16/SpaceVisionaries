@@ -31,17 +31,15 @@ export class Planet {
         return this.sphere;
     }
 
-    movePlanet(orbit) {
+    movePlanet(orbit, time) {
 
         let oldPosition = this.getPosition().toArray();
         let newPosition = orbit.getPoint(this.orbitComplete).toArray();
         this.translate([newPosition[0] - oldPosition[0], oldPosition[1], newPosition[1] - oldPosition[2]]);
         // console.log(newPosition);
-        this.orbitComplete += this.v;
+        const T = 1/this.v;
+        this.orbitComplete = (time*60 - T*Math.floor(time*60/T))*this.v;
 
-        if (this.orbitComplete >= 1) {
-            this.orbitComplete = 0;
-        }
     }
 
     getPosition() {

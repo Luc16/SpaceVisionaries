@@ -74,7 +74,8 @@ const main = function () {
 	window.addEventListener('resize', onWindowResize);
 
 
-
+	var simulationVel = 1;
+	var time = 0;
 	var then = 0;
 	function animate(now) {
 		requestAnimationFrame(animate);
@@ -86,7 +87,7 @@ const main = function () {
 		}
 		then = now;
 
-		solarSystem.move();
+		solarSystem.move(now);
 
 		controls.update()
 

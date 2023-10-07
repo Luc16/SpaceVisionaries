@@ -74,10 +74,10 @@ export class SolarSystem {
         this.orbits.push(new BasicOrbit(scene, 301.8048, 301.78972, 5.8689, 0, 0x1e90ff));
     }
 
-    move() {
+    move(time) {
         // let numPoints = this.orbits[0].getPoints().length;
         for (let i = 0; i < this.planets.length; i++) {
-            this.planets[i].movePlanet(this.orbits[i]);
+            this.planets[i].movePlanet(this.orbits[i], time);
         }
     }
 }
