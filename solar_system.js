@@ -31,35 +31,35 @@ export class SolarSystem {
 
         var sun = new Planet(scene, sunRadius, "resources/textures/sun_texture.jpg");
 	
-        var mercury = new Planet(sun.getMesh(), mercuryRadius, "resources/textures/mercury_texture.jpg");
+        var mercury = new Planet(sun.getMesh(), mercuryRadius, "resources/textures/mercury_texture.jpg", 0.0008);
         mercury.translate([this.sunMercuryDist, 0, 0])
         this.planets.push(mercury);
 
-        var venus = new Planet(sun.getMesh(), venusRadius, "resources/textures/venus_texture.jpg");
+        var venus = new Planet(sun.getMesh(), venusRadius, "resources/textures/venus_texture.jpg", 0.00065);
         venus.translate([this.sunVenusDist, 0, 0])
         this.planets.push(venus);
 
-        var earth = new Planet(sun.getMesh(), earthRadius, "resources/textures/earth_texture.jpg");
+        var earth = new Planet(sun.getMesh(), earthRadius, "resources/textures/earth_texture.jpg", 0.0006);
         earth.translate([this.sunEarthDist, 0,0])
         this.planets.push(earth);
 
-        var mars = new Planet(scene, marsRadius, "resources/textures/mars_texture.jpg");
+        var mars = new Planet(scene, marsRadius, "resources/textures/mars_texture.jpg", 0.0005);
         mars.translate([this.sunMarsDist, 0, 0])
         this.planets.push(mars);
 
-        var jupiter = new Planet(scene, jupiterRadius, "resources/textures/jupiter_texture.jpg");
+        var jupiter = new Planet(scene, jupiterRadius, "resources/textures/jupiter_texture.jpg", 0.00025);
         jupiter.translate([this.sunJupiterDist, 0, 0])
         this.planets.push(jupiter);
 
-        var saturn = new Planet(scene, saturnRadius, "resources/textures/saturn_texture.jpg");
+        var saturn = new Planet(scene, saturnRadius, "resources/textures/saturn_texture.jpg", 0.0002);
         saturn.translate([this.sunSaturnDist, 0, 0])
         this.planets.push(saturn);
 
-        var uranus = new Planet(scene, uranusRadius, "resources/textures/uranus_texture.jpg");
+        var uranus = new Planet(scene, uranusRadius, "resources/textures/uranus_texture.jpg", 0.00015);
         uranus.translate([this.sunUranusDist, 0, 0])
         this.planets.push(uranus);
 
-        var neptune = new Planet(scene, neptuneRadius, "resources/textures/neptune_texture.jpg");
+        var neptune = new Planet(scene, neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001);
         neptune.translate([this.sunNeptuneDist, 0, 0])
         this.planets.push(neptune);
 
@@ -81,17 +81,9 @@ export class SolarSystem {
     }
 
     move() {
-        let numPoints = this.orbits[0].getPoints().length;
+        // let numPoints = this.orbits[0].getPoints().length;
         for (let i = 0; i < this.planets.length; i++) {
-            let oldPosition = this.planets[i].getPosition().toArray();
-            let newPosition = this.orbits[i].getPoint(this.currentPosition).toArray();
-            this.planets[i].translate([newPosition[0] - oldPosition[0], oldPosition[1], newPosition[1] - oldPosition[2]]);
-            console.log(newPosition);
-        }
-        this.currentPosition += 0.0001;
-
-        if (this.currentPosition >= 1) {
-            this.currentPosition = 0;
+            this.planets[i].movePlanet(this.orbits[i]);
         }
     }
 }

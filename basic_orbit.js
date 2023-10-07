@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
 
 
 export class BasicOrbit{
@@ -16,10 +16,6 @@ export class BasicOrbit{
         orbit.rotateX(Math.PI/2);
         orbit.renderOrder = 1000;
         scene.add(orbit);
-    }
-
-    getPoints() {
-        return this.points
     }
 
     getPoint(t) {

@@ -1,7 +1,13 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
+import { EffectComposer } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/EffectComposer';
+import { FXAAShader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/shaders/FXAAShader.js';
+import { RenderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/RenderPass';
+import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
+import { ColorCorrectionShader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/shaders/ColorCorrectionShader.js';
 
 import { SolarSystem } from './solar_system.js';
+
 
 const main = function () {
 
@@ -10,7 +16,26 @@ const main = function () {
 
 	const renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setPixelRatio(window.devicePixelRatio);
 	document.body.appendChild(renderer.domElement);
+
+	const renderPass = new RenderPass(scene, camera);
+	renderPass.clearAlpha = 0;
+
+
+	const fxaaPass = new ShaderPass(FXAAShader);
+	const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
+
+	const composer = new EffectComposer(renderer);
+
+	const pixelRatio = renderer.getPixelRatio();
+	fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerWidth * pixelRatio);
+	fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerHeight * pixelRatio);
+
+	composer.addPass(renderPass);
+	composer.addPass(colorCorrectionPass);
+	composer.addPass(fxaaPass);
+
 
 	const solarSystem = new SolarSystem(scene)
 	solarSystem.drawOrbits(scene);
@@ -44,7 +69,8 @@ const main = function () {
 
 		controls.update()
 
-		renderer.render(scene, camera);
+		composer.render()
+		// renderer.render(scene, camera);
 
 	};
 
