@@ -1,7 +1,7 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
 
 export class Trail {
-    constructor(scene, size, color, ) {
+    constructor(scene, size, color) {
         this.size = 100
         this.points = [];
         this.lineGeometry = new THREE.BufferGeometry().setFromPoints( this.points );

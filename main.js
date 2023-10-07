@@ -25,13 +25,21 @@ const updateObjects = function(satellite, planets, dt) {
 	satellite.pos.add(satellite.vel.clone().multiplyScalar(dt))
 
 	for (const planet of planets) {
-		if (satellite.pos.distanceToSquared(planet.pos) < planet.radius*planet.radius) {
+		if (satellite.pos.distanceToSquared(planet.pos) <= planet.radius*planet.radius) {
 			satellite.acc = new THREE.Vector3(0, 0, 0)
 			satellite.vel = new THREE.Vector3(0, 0, 0)
-			satellite.pos = planet.pos.clone()
+			if (planet.radius == 0.8) {
+				console.log(planet.radius + " " + satellite.pos.distanceToSquared(planets[0].pos) + " " + satellite.pos.distanceToSquared(planet.pos));				
+			}
+			satellite.pos = planet.pos.clone().add(planet.pos.clone()
 				.sub(satellite.pos)
 				.normalize()
-				.multiplyScalar(-(planet.radius))
+				.multiplyScalar(-(planet.radius)))
+
+			if (planet.radius == 0.8) {
+				console.log(planet.radius)
+				console.log(satellite.pos);				
+			}
 		}
 	}
 	
@@ -56,14 +64,16 @@ const main = async function() {
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-	const satellite = new Satellite([0, 0, 0], [0, 0, 0]);
-	await satellite.loadModel(scene, 0.1, "resources/satellite/scene.gltf")
+	const satellite = new Satellite([0, 0, 0], [0, 0, 0], 0.1);
+	await satellite.loadModel(scene, "resources/satellite/scene.gltf")
 	
 	var resetPos = new THREE.Vector3(-6, 0, 0)
 	var resetVel = new THREE.Vector3(1, 10, 0)
 	resetSatellite(satellite, resetPos, resetVel);
 
 	const gui = new GUI()
+	gui.add(satellite, "scl", 0, 1, 0.01).name("Scale").listen()
+
 	gui.add(satellite.pos, "x", -50, 50, 0.01).name("Position X").listen()
 	gui.add(satellite.pos, "y", -50, 50, 0.01).name("Position Y").listen()
 	gui.add(satellite.pos, "z", -50, 50, 0.01).name("Position Z").listen()

@@ -2,19 +2,28 @@ import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 
 export class Satellite{
-    constructor(vel, acc){
+    constructor(vel, acc, scale){
         this.velocity = new THREE.Vector3(vel);
         this.acc = new THREE.Vector3(acc);
-
+        this.scale = scale;
         this.object = null;
 
     }
 
-    async loadModel(scene, scale, modelPath){
+    set scl(scale) {
+      this.scale = scale
+      this.object.scale.set(this.scale, this.scale, this.scale); 
+    }
+
+    get scl() {
+      return this.scale
+    }
+
+    async loadModel(scene, modelPath){
       const loader = new GLTFLoader();
       const giltf = await loader.loadAsync( modelPath )
       this.object = giltf.scene;
-      this.object.scale.set(scale, scale, scale); 
+      this.object.scale.set(this.scale, this.scale, this.scale); 
       scene.add(this.object)
 
     }
