@@ -19,6 +19,9 @@ export class Planet{
         this.sphere.translateY(vec[1]);
         this.sphere.translateZ(vec[2]);
     }
-
+    
+    getMesh(){
+        return this.sphere;
+    }
 
 }

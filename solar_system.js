@@ -29,15 +29,15 @@ export class SolarSystem {
 
         var sun = new Planet(scene, sunRadius, "resources/textures/sun_texture.jpg");
 	
-        var mercury = new Planet(scene, mercuryRadius, "resources/textures/mercury_texture.jpg");
+        var mercury = new Planet(sun.getMesh(), mercuryRadius, "resources/textures/mercury_texture.jpg");
         mercury.translate([this.sunMercuryDist, 0, 0])
         this.planets.push(mercury);
 
-        var venus = new Planet(scene, venusRadius, "resources/textures/venus_texture.jpg");
+        var venus = new Planet(sun.getMesh(), venusRadius, "resources/textures/venus_texture.jpg");
         venus.translate([this.sunVenusDist, 0, 0])
         this.planets.push(venus);
 
-        var earth = new Planet(scene, earthRadius, "resources/textures/earth_texture.jpg");
+        var earth = new Planet(sun.getMesh(), earthRadius, "resources/textures/earth_texture.jpg");
         earth.translate([this.sunEarthDist, 0,0])
         this.planets.push(earth);
 

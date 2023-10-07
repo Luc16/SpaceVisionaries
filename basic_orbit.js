@@ -13,6 +13,7 @@ export class BasicOrbit{
         const material = new THREE.LineBasicMaterial({ color: 0xffffff });
         const orbit = new THREE.Line(geometry, material);
         orbit.rotateX(Math.PI/2);
+        orbit.renderOrder = 1000;
         scene.add(orbit);
     }
 }
