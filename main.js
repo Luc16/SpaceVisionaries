@@ -6,6 +6,8 @@ import { Planet } from './planet.js';
 import { Satellite } from './satellite_class.js';
 import { Vector3 } from "three";
 
+import { GUI } from 'dat.gui';
+
 
 const updateObjects = function(satellite, mars, dt) {
 	satellite.acc = mars.pos.clone()
@@ -29,7 +31,7 @@ const updateObjects = function(satellite, mars, dt) {
 const setArrowToVel = function(satellite, arrow) {
 	arrow.position.copy(satellite.pos.clone())
 	arrow.setDirection(satellite.vel.clone().normalize())
-	arrow.setLength(satellite.vel.clone().length())
+	arrow.setLength(satellite.vel.clone().length()/10)
 }
 
 const main = async function() {
@@ -40,20 +42,41 @@ const main = async function() {
 
 	const satellite = new Satellite([0, 0, 0], [0, 0, 0]);
 	await satellite.loadModel(scene, 0.1, "resources/satellite/scene.gltf")
-	satellite.vel = new THREE.Vector3(1, 10, 0)
+	
+  satellite.vel = new THREE.Vector3(1, 10, 0)
 	satellite.pos = new THREE.Vector3(-6, 0, 0)
+
+  const gui = new GUI()
+  gui.add(satellite.pos, "x", -50, 50, 0.01).name("Initial X position")
+  gui.add(satellite.pos, "y", -50, 50, 0.01).name("Initial Y position")
+  gui.add(satellite.pos, "z", -50, 50, 0.01).name("Initial Z position")
+
+  
+
+
+
 
 	document.addEventListener('keydown', (event) => {
 		var name = event.key;
 		var code = event.code;
+    console.log(satellite.pos)
 		if (event.code == 'Space') {
 			simRunning = !simRunning
+      
 		}
+
+    window.onblur = function(ev){
+      simRunning = false;
+    }
+
+    window.onfocus = function(ev){
+      simRunning = true;
+    }
 		// Alert the key name and key code on keydown
 		// alert(`Key pressed ${name} \r\n Key code value: ${code}`);
 	  }, false);
 
-	const renderer = new THREE.WebGLRenderer({ alpha: true }); 
+	const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	document.getElementById("container3D").appendChild(renderer.domElement);
@@ -69,7 +92,7 @@ const main = async function() {
 	const ambientLight = new THREE.AmbientLight(0x333333, 5);
 	scene.add(ambientLight);
 
-	var arrowHelper = new THREE.ArrowHelper(satellite.vel.clone().normalize(), satellite.pos.clone(), satellite.vel.clone().length(), 0xff0000 );
+	var arrowHelper = new THREE.ArrowHelper(satellite.vel.clone().normalize(), satellite.pos.clone(), satellite.vel.clone().length()/10, 0xff0000 );
 	scene.add( arrowHelper );
 
 	var controls = new OrbitControls(camera, renderer.domElement);
@@ -81,22 +104,25 @@ const main = async function() {
 	  });
 
 	var then = 0;
+
 	function animate(now) {
 		requestAnimationFrame(animate);
-
-
 		now *= 0.001;
 		var deltaTime = now - then;
 		if (!deltaTime) {
 			deltaTime = 0
 		}
+    else if (deltaTime > 0.1){
+      deltaTime = 1/60;
+    }
 		then = now;
 
 		if (simRunning) {		
-			updateObjects(satellite, mars, deltaTime)
-			setArrowToVel(satellite, arrowHelper)
-		
-		}
+			updateObjects(satellite, mars, deltaTime)    
+		} 
+    setArrowToVel(satellite, arrowHelper)
+
+    
 		renderer.render(scene, camera);
 
 	};
