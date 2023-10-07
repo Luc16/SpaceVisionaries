@@ -2,7 +2,7 @@ import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module
 
 
 export class BasicOrbit{
-    constructor(scene, radiusA, radiusB, positionX, positionY){
+    constructor(scene, radiusA, radiusB, positionX, positionY, color){
         this.path = new THREE.Path();
         this.path.arcLengthDivisions = 2000;
         this.path.ellipse(positionX, positionY, radiusA, radiusB, 0, Math.PI / 2, false);
@@ -11,7 +11,7 @@ export class BasicOrbit{
         this.path.ellipse(0, radiusB, radiusA, radiusB, 3 * Math.PI / 2, 2 * Math.PI, false);
         this.points = this.path.getPoints(100);
         const geometry = new THREE.BufferGeometry().setFromPoints(this.points);
-        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const material = new THREE.LineBasicMaterial({ color: color });
         const orbit = new THREE.Line(geometry, material);
         orbit.rotateX(Math.PI/2);
         orbit.renderOrder = 1000;

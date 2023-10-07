@@ -22,7 +22,6 @@ const main = function () {
 	const renderPass = new RenderPass(scene, camera);
 	renderPass.clearAlpha = 0;
 
-
 	const ssaaRenderPass = new SSAARenderPass( scene, camera );	
 	const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
 	const composer = new EffectComposer(renderer);
@@ -32,7 +31,16 @@ const main = function () {
 	composer.addPass(renderPass);
 	composer.addPass(colorCorrectionPass);
 	composer.addPass(ssaaRenderPass);
-
+	
+	const cubeTextureLoader = new THREE.CubeTextureLoader();
+	scene.background = cubeTextureLoader.load([
+		"resources/textures/stars_skybox.jpg",
+		"resources/textures/stars_skybox.jpg",
+		"resources/textures/stars_skybox.jpg",
+		"resources/textures/stars_skybox.jpg",
+		"resources/textures/stars_skybox.jpg",
+		"resources/textures/stars_skybox.jpg"
+	]);
 
 	const solarSystem = new SolarSystem(scene)
 	solarSystem.drawOrbits(scene);
@@ -50,6 +58,8 @@ const main = function () {
 	}
 
 	controls.listenToKeyEvents(window);
+	controls.enableDamping = true;
+	controls.dampingFactor = 0.1
 
 	var then = 0;
 	function animate(now) {
