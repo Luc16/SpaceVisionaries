@@ -1,7 +1,7 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
 
 export class Planet{
-    constructor(scene, radius, texturePath){
+    constructor(scene, mass, radius, texturePath){
 
         //initializing material
         this.material = new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load(texturePath)});
@@ -10,6 +10,7 @@ export class Planet{
         this.geometry = new THREE.SphereGeometry( radius, 50, 50); 
         this.sphere = new THREE.Mesh( this.geometry, this.material ); 
         this.radius = radius
+        this.mass = mass
         scene.add( this.sphere );
 
     }
@@ -18,6 +19,7 @@ export class Planet{
         this.sphere.translateX(vec[0]);
         this.sphere.translateY(vec[1]);
         this.sphere.translateZ(vec[2]);
+        return this
     }
 
     get pos() {

@@ -7,25 +7,35 @@ import { Satellite } from './satellite_class.js';
 import { Vector3 } from "three";
 
 import { GUI } from 'dat.gui';
+import { Trail } from "./trail.js";
 
 
-const updateObjects = function(satellite, mars, dt) {
-	satellite.acc = mars.pos.clone()
-								.sub(satellite.pos)
-								.normalize()
-								.multiplyScalar(1000/(satellite.pos.distanceToSquared(mars.pos)))
+const updateObjects = function(satellite, planets, dt) {
+	for (const planet of planets) {
+		satellite.acc.add(
+			planet.pos.clone()
+			.sub(satellite.pos)
+			.normalize()
+			.multiplyScalar(50*planet.mass/(satellite.pos.distanceToSquared(planet.pos)))
+		)
+	}
 	
 	satellite.vel.add(satellite.acc.clone().multiplyScalar(dt))
 
 	satellite.pos.add(satellite.vel.clone().multiplyScalar(dt))
-	if (satellite.pos.distanceToSquared(mars.pos) < mars.radius*mars.radius) {
-		satellite.acc = new THREE.Vector3(0, 0, 0)
-		satellite.vel = new THREE.Vector3(0, 0, 0)
-		satellite.pos = mars.pos.clone()
-			.sub(satellite.pos)
-			.normalize()
-			.multiplyScalar(-(mars.radius))
+
+	for (const planet of planets) {
+		if (satellite.pos.distanceToSquared(planet.pos) < planet.radius*planet.radius) {
+			satellite.acc = new THREE.Vector3(0, 0, 0)
+			satellite.vel = new THREE.Vector3(0, 0, 0)
+			satellite.pos = planet.pos.clone()
+				.sub(satellite.pos)
+				.normalize()
+				.multiplyScalar(-(planet.radius))
+		}
 	}
+	
+	
 }
 
 const setArrowToVel = function(satellite, arrow) {
@@ -71,6 +81,8 @@ const main = async function() {
 		simRunning = true;
 	}
 
+	const trail = new Trail(scene, 100, 0x0000ff)
+
 	document.addEventListener('keydown', (event) => {
 		if (event.code == 'Space') {
 			if (!simRunning){
@@ -79,6 +91,7 @@ const main = async function() {
 			simRunning = !simRunning
 		} 
 		else if (event.key == 'r') {
+			trail.reset()
 			resetSatellite(satellite, resetPos, resetVel)
 			simRunning = false
 		}
@@ -89,9 +102,13 @@ const main = async function() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	document.getElementById("container3D").appendChild(renderer.domElement);
-	camera.position.z = 5;
+	camera.position.z = 10;
+	
 
-	var mars = new Planet(scene, 2, "resources/textures/mars_texture.jpg");
+	const planets = [
+		new Planet(scene, 1, 2, "resources/textures/mars_texture.jpg"), // mars
+		new Planet(scene, 0.1, 0.8, "resources/textures/moon_texture.jpg").translate([20, 0, 0]), // moon
+	]
 	
 	const topLight = new THREE.DirectionalLight(0xffffff, 5); // (color, intensity)
 	topLight.position.set(100, 100, 100) //top-left-ish
@@ -110,10 +127,9 @@ const main = async function() {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		renderer.setSize(window.innerWidth, window.innerHeight);
-	  });
+	});
 
 	var then = 0;
-
 	function animate(now) {
 		requestAnimationFrame(animate);
 		now *= 0.001;
@@ -127,7 +143,8 @@ const main = async function() {
 		then = now;
 
 		if (simRunning) {		
-			updateObjects(satellite, mars, deltaTime)    
+			updateObjects(satellite, planets, deltaTime)
+			trail.add(satellite.pos.clone())
 		} 
     	setArrowToVel(satellite, arrowHelper)
 
