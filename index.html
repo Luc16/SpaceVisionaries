@@ -2,7 +2,7 @@
 <html>
 	<head lang="en">
 		<meta charset="utf-8">
-		<title>My first three.js app</title>
+		<title>Space Visionares</title>
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap');
 			body { margin: 0; }
@@ -19,9 +19,102 @@
 			#gui{
 				z-index: 100;
 			}
+			#divs {
+				z-index: 100;
+			}
+
+			.nav {
+				font-family: 'Space Mono', monospace;;
+				width: 100%;
+				height: 65px;
+				position: fixed;
+				line-height: 65px;
+				text-align: center;
+				z-index: 100000;
+			}
+
+			.nav div.logo {
+				float: left;
+				width: auto;
+				height: auto;
+				padding-left: 3rem;
+			}
+
+			.nav div.logo a {
+				text-decoration: none;
+				color: #fff;
+				font-size: 1.5rem;
+			}
+
+			.nav div.logo a:hover {
+				color: #a9a9a9;
+			}
+
+			.nav div.main_list {
+				height: 65px;
+				float: right;
+			}
+
+			.nav div.main_list ul {
+				width: 100%;
+				height: 65px;
+				display: flex;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+
+			.nav div.main_list ul li {
+				width: auto;
+				height: 65px;
+				padding: 0;
+				padding-right: 3rem;
+			}
+
+			.nav div.main_list ul li a {
+				text-decoration: none;
+				color: #fff;
+				line-height: 65px;
+				font-size: 1.4rem;
+			}
+
+			.nav div.main_list ul li a:hover {
+				color: #a9a9a9;
+			}
+
 		</style>
 	</head>
 	<body>
+		<nav class="nav">
+			<div class="container">
+				<div class="logo">
+					<a href="#">Space Visionares</a>
+				</div>
+				<div id="mainListDiv" class="main_list">
+					<ul class="navlinks">
+						<li><a href="#">About</a></li>
+						<li><a href="#">Source</a></li>
+						<li><a href="#">Contact</a></li>
+					</ul>
+				</div>
+				<span class="navTrigger">
+					<i></i>
+					<i></i>
+					<i></i>
+				</span>
+			</div>
+		</nav>
+<!-- 
+		<div class="">
+			<div>
+				<h2>titulo</h2>
+				<button>x</button>
+			</div>
+			
+			<p>texto aleatorio</p>
+
+		</div> -->
+
 		<div id="gui_container"></div>
 		<script type="module" src="/main.js"></script>
 	</body>
