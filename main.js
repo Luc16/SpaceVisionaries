@@ -27,7 +27,7 @@ const main = function () {
 		threshold: 0.1,
 		strength: 0.3,
 		radius: 0.1,
-		exposure: 1
+		exposure: 0.01
 	};
 
 	const renderer = new THREE.WebGLRenderer();
@@ -50,6 +50,7 @@ const main = function () {
 	bloomPass.threshold = params.threshold;
 	bloomPass.strength = params.strength;
 	bloomPass.radius = params.radius;
+	bloomPass.exposure = params.exposure;
 	const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
 	const composer = new EffectComposer(renderer);
 
@@ -80,7 +81,7 @@ const main = function () {
 	camera.lookAt([0, 0, 0]);
 
 	controls.minDistance = solarSystem.sun.radius*5;
-	// controls.enablePan = false;
+	controls.enablePan = false;
 	controls.update();
 
 	const labelRenderer = new CSS2DRenderer();
@@ -156,26 +157,25 @@ const main = function () {
 				
 			}
 			
-			controls.target.copy(closest.getPosition())
+			controls.target = closest.getPosition();
 			controls.minDistance = closest.radius*5;
-			controls.enablePan = false;
 			controls.update();
 
-			console.log(camera.position)
+			//console.log(camera.position)
 			const auxVector = new Vector3(camera.position.x, camera.position.y, camera.position.z)
 			
-			console.log(auxVector)
-			console.log(closest.getPosition())
+			//console.log(auxVector)
+			//console.log(closest.getPosition())
 			auxVector.sub(closest.getPosition());
-			console.log(auxVector)
+			//console.log(auxVector)
 			auxVector.normalize();
-			console.log(auxVector)
-			console.log(closest.radius)
+			//console.log(auxVector)
+			//console.log(closest.radius)
 			auxVector.multiplyScalar(closest.radius*3);
-			console.log(auxVector)
+			//console.log(auxVector)
 			const aux = new Vector3(closest.getPosition().x, closest.getPosition().y, closest.getPosition().z); 
 			auxVector.copy(aux.add(auxVector));
-			console.log(auxVector)
+			//console.log(auxVector)
 
 			gsap.to(camera.position, {
 				x: auxVector.x,
@@ -187,22 +187,15 @@ const main = function () {
 				}
 			})
 
-			// camera.position.set(auxVector.x, auxVector.y, auxVector.z)
-
-			// console.log(camera.position)
-			// console.log(closest.getPosition())
-			// camera.lookAt();
-
 			controls.update();
 		} else {
 			if (timer.vel == 0) {
 				timer.vel = timer.lastVel;
 			}
-			if ( timer.lastVel == 0 ) {
-				timer.vel = 1
-			}
+			// if ( timer.lastVel == 0 ) {
+			// 	timer.vel = 1
+			// }
 			timer.vel = timer.vel;
-			controls.enablePan = true;
 			controls.minDistance = 0;
 		}
 
@@ -230,21 +223,19 @@ const main = function () {
 		now *= 0.001;
 		var deltaTime = now - then;
 		if (!deltaTime) {
-			deltaTime = 0
-			timer.time = 0
+			deltaTime = 0;
+			timer.time = 0;
 		}
 		then = now;
-		timer.time += timer.vel * deltaTime
+		timer.time += timer.vel * deltaTime;
 
 		if (timer.time) {
 			solarSystem.move(timer.time);
 		}
 
-		controls.update()
+		labelRenderer.render(scene, camera);
 
-		labelRenderer.render(scene, camera)
-
-		composer.render()
+		composer.render();
 		// renderer.render(scene, camera);
 
 	};
