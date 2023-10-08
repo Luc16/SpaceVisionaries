@@ -59,8 +59,9 @@ const main = async function() {
 	const satellite = new Satellite([0, 0, 0], [0, 0, 0], 0.1);
 	await satellite.loadModel(scene, "resources/satellite/scene.gltf")
 	
-	var resetPos = new THREE.Vector3(2, 0, 0)
-	var resetVel = new THREE.Vector3(6, 24, 0)
+	var resetPos = new THREE.Vector3(-8, 0, 0)
+	var resetVel = new THREE.Vector3(2.5, -9.8, 0)
+
 	resetSatellite(satellite, resetPos, resetVel);
 
 	const gui = new GUI()
@@ -93,10 +94,8 @@ const main = async function() {
 			simRunning = !simRunning
 		} 
 		else if (event.key == 'r') {
-			trail.reset()
-			resetSatellite(satellite, resetPos, resetVel)
-			simRunning = false
-		}
+		  location.reload()
+    }
     else if(event.key == 't'){
       changeCamera = !changeCamera;
     }
@@ -110,11 +109,11 @@ const main = async function() {
 	camera.position.z = 10;
 	
 	const planets = [
-		new Planet(scene, 4.5, 2, "resources/textures/mars_texture.jpg"), // mars
-		new Planet(scene, 0.1, 0.8, "resources/textures/moon_texture.jpg").translate([20, 0, 0]), // moon
+		new Planet(scene, 0.7, 2, "resources/textures/mars_texture.jpg"), // mars
+		new Planet(scene, 4.5, 1, "resources/textures/moon_texture.jpg").translate([20, 2, 0]), // moon
 	]
 	
-	const topLight = new THREE.DirectionalLight(0xffffff, 5); // (color, intensity)
+	const topLight = new THREE.DirectionalLight(0xffffff, 3); // (color, intensity)
 	topLight.position.set(100, 100, 100) //top-left-ish
 	topLight.castShadow = true;
 	scene.add(topLight);
@@ -159,13 +158,13 @@ const main = async function() {
   var then = 0;
 	function animate(now) {
 		requestAnimationFrame(animate);
-		now *= 0.001;
+		now *= 0.0001;
 		var deltaTime = now - then;
 		if (!deltaTime) {
 			deltaTime = 0
 		}
 		else if (deltaTime > 0.1){
-		deltaTime = 1/60;
+		  deltaTime = 1/60;
 		}
 		then = now;
    
@@ -176,8 +175,10 @@ const main = async function() {
       updateObjects(satellite, planets, deltaTime)    
       trail.add(satellite.pos.clone())
 
-      controls.maxDistance = 7;
-      controls.minDistance = 7;   
+      if(controls.target == satellite.pos){
+       controls.maxDistance = 5;
+        controls.maxDistance = 5;
+      }
     }
     else{
       controls.maxDistance = 1000;
