@@ -377,6 +377,8 @@ const main = async function () {
 				document.onmousemove = onMouseMove;
 				document.onclick = onClick;
 				document.onwheel = onWheel
+				generalControls.preset = [10.246809049864057, 1.1937240000000011, 4.896345408993087, 0, -0.1, 0, -1],
+
 			}
 		}
 
