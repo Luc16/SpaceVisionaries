@@ -4,8 +4,8 @@ import { BasicOrbit } from './basic_orbit.js';
 
 export class SolarSystem {
     constructor(document, scene) {
-        const sunscale = 100;
-        const scale = 1000;
+        const sunscale = 400;
+        const scale = 4000;
         const sunRadius =  4.6524e-3 * sunscale; //TODO: Radio multiplicado por 100
 
         // const mercuryRadius = 0.0035*sunRadius*1;
@@ -17,14 +17,14 @@ export class SolarSystem {
         // const uranusRadius = 0.0367*sunRadius*1;
         // const neptuneRadius = 0.0356*sunRadius*1;
 
-        const mercuryRadius = 1.6310e-5 * scale;
-        const venusRadius = 4.0454e-5 * scale;
-        const earthRadius = 4.2633e-5 * scale;
-        const marsRadius = 2.2714e-5 * scale;
+        const mercuryRadius = 1.6310e-5 * scale * 3.5;
+        const venusRadius = 4.0454e-5 * scale * 3.5;
+        const earthRadius = 4.2633e-5 * scale * 3.5;
+        const marsRadius = 2.2714e-5 * scale * 3.5;
         const jupiterRadius = 4.7787e-4 * scale;
         const saturnRadius = 4.0287e-4 * scale;
-        const uranusRadius = 1.7085e-4 * scale;
-        const neptuneRadius = 1.655e-4 * scale;
+        const uranusRadius = 1.7085e-4 * scale * 2;
+        const neptuneRadius = 1.655e-4 * scale * 2;
 
         this.planets = [];
         this.orbits = [];

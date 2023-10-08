@@ -25,8 +25,8 @@ const main = function () {
 
 	const params = {
 		threshold: 0.1,
-		strength: 0.3,
-		radius: 0.1,
+		strength: 0.25,
+		radius: 0.5,
 		exposure: 0.01
 	};
 
@@ -54,7 +54,7 @@ const main = function () {
 	const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
 	const composer = new EffectComposer(renderer);
 
-	ssaaRenderPass.sampleLevel = 0;
+	ssaaRenderPass.sampleLevel = 1;
 
 	composer.addPass(renderPass);
 	composer.addPass(colorCorrectionPass);
@@ -178,7 +178,13 @@ const main = function () {
 				const aux = new Vector3(closest.getPosition().x, closest.getPosition().y, closest.getPosition().z); 
 				auxVector.copy(aux.add(auxVector));
 				//console.log(auxVector)
+
+				var a = closest.getPosition();
 	
+				while(closest.getPosition() != a) {
+					a = closest.getPosition();
+				}
+
 				gsap.to(camera.position, {
 					x: auxVector.x,
 					y: auxVector.y,
