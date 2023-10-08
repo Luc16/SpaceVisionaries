@@ -64,22 +64,22 @@ export class SolarSystem {
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 52.0387, 51.97625, 5.0668, 0, 0xffa07a, 1.3*Math.PI/180),
-                "Jupiter", 1.3*(4*Math.PI*jupiterRadius*jupiterRadius/3), jupiterRadius, "resources/textures/jupiter_texture.jpg", 0.00025)
+                "Jupiter", 1.3*(4*Math.PI*3.5*3.5*jupiterRadius*jupiterRadius/3), jupiterRadius, "resources/textures/jupiter_texture.jpg", 0.00025)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 95.72526, 95.5957, 9.9532, 0, 0xffdead, 2.5*Math.PI/180),
-                "Saturn", 0.7*(4*Math.PI*saturnRadius*saturnRadius/3), saturnRadius, "resources/textures/saturn_texture.jpg", 0.0002)
+                "Saturn", 0.7*(4*Math.PI*3.5*3.5*saturnRadius*saturnRadius/3), saturnRadius, "resources/textures/saturn_texture.jpg", 0.0002)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 191.6477, 191.4359, 17.9612, 0, 0x87cefa, 0.8*Math.PI/180),
-                "Uranus", 1.3*(4*Math.PI*uranusRadius*uranusRadius/3), uranusRadius, "resources/textures/uranus_texture.jpg", 0.00015)
+                "Uranus", 1.3*(4*Math.PI*3.5*3.5*uranusRadius*uranusRadius/12), uranusRadius, "resources/textures/uranus_texture.jpg", 0.00015)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 301.8048, 301.78972, 5.8689, 0, 0x1e90ff, 1.8*Math.PI/180),
-                "Neptune", 1.6*(4*Math.PI*neptuneRadius*neptuneRadius/3), neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001)
+                "Neptune", 1.6*(4*Math.PI*3.5*3.5*neptuneRadius*neptuneRadius/12), neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001)
         )
         // this.planets.push(
         //     new Planet(

@@ -142,7 +142,8 @@ const setArrowToVel = function(satellite, arrow) {
 
 const main = async function () {
 	const generalControls = {
-		gravityConstant: 1
+		gravityConstant: 1,
+		preset: new THREE.Vector4(0, 0, 0, -1),
 	}
 	const modeController = {
 		overviewMode: true,
@@ -210,15 +211,26 @@ const main = async function () {
 		modeController.travelModeRunning = false
 		trail.reset()
 		satellite.vel = satellite.resetVel.clone()
-		timer.time = timer.simInitTime
+
+		if (typeof generalControls.preset === 'string') {
+			generalControls.preset = generalControls.preset.replace("[", "").replace("]", "").split(",").map(Number)
+		}
+		if (generalControls.preset[6] > 0) {
+			timer.time = generalControls.preset[3]
+		} else {
+			timer.time = timer.simInitTime
+		}
 
 		satellite.pos = satellite.resetPos.clone()
+		satellite.vel.x = generalControls.preset[3]
+		satellite.vel.y = generalControls.preset[4]
+		satellite.vel.z = generalControls.preset[5]
+		console.log(satellite.pos);
 		satellite.acc = new THREE.Vector3(0, 0, 0)
 	}
 
 	const buttons = {
 		resetSat: function() {
-			resetSatellite()
 			resetSatellite()
 		},
 		run: function(){ 
@@ -226,12 +238,12 @@ const main = async function () {
 				satellite.resetVel = satellite.vel.clone()
 				modeController.travelModeRunning = true 
 				timer.vel = 1
-				console.log(satellite.vel);
-				console.log(timer.time);
+				console.log(`[${satellite.pos.x}, ${satellite.pos.y}, ${satellite.pos.z}, ${satellite.vel.x}, ${satellite.vel.y}, ${satellite.vel.z}, ${timer.time}]`);
 			}
 			
 		},
-		camSwitch: function () {modeController.changeCamera = !modeController.changeCamera}
+		satCam: function () { modeController.changeCamera = true },
+		earthCam: function () { modeController.changeCamera = false }
 	}
 	
 	// create guis
@@ -249,8 +261,19 @@ const main = async function () {
 	satSettings.hide()
 	satSettings.add(buttons, "run").name("Launch")
 	satSettings.add(buttons, "resetSat").name("Reset")
-	satSettings.add(buttons, "camSwitch").name("Switch Camera")
-	satSettings.add(satellite, "scl", 0, 1, 0.01).name("Scale").listen()
+	satSettings.add(buttons, "satCam").name("Switch to Satellite View")
+	satSettings.add(buttons, "earthCam").name("Switch to Earth View")
+
+	satSettings.add(generalControls, "preset", {
+		"Default": [0, 0, 0, -1],
+		"Pass By Jupter": [1.9208, -5, 0, 564.83], 
+		"Earth Loop": [0, -7.2956900000000005, 0, 1.53184],
+	})
+	.onFinishChange(
+		function(){
+			buttons.resetSat()
+		}
+	  )
 
 	satSettings.add(satellite.vel, "x", -5, 5, 0.0001).name("Velocity X").listen()
 	satSettings.add(satellite.vel, "y", -5, 5, 0.0001).name("Velocity Y").listen()
