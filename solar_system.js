@@ -39,7 +39,7 @@ export class SolarSystem {
         this.currentPosition = 0;
 
         this.sun = new Planet(document, scene, new BasicOrbit(scene, 0, 0, 0, 0, 0x000000),
-            "Sun", 1, sunRadius, "resources/textures/sun_texture.jpg");
+            "Sun", 1.4*(4*Math.PI*sunRadius*sunRadius/3), sunRadius, "resources/textures/sun_texture.jpg");
 	
         this.planets.push(
             new Planet(

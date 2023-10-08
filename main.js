@@ -12,7 +12,6 @@ import { SolarSystem } from './solar_system.js';
 import { Satellite } from './satellite_class.js';
 import { Trail } from "./trail.js";
 import gsap from 'https://cdn.skypack.dev/gsap';
-import { normalize } from "three/src/math/MathUtils.js";
 
 function createLabelRenderer() {
 	const labelRenderer = new CSS2DRenderer();
@@ -123,7 +122,7 @@ const updateObjects = function(satellite, planets, gravity, timer, dt) {
 	for (const planet of planets) {
 		if (satellite.pos.distanceToSquared(planet.pos) <= planet.radius*planet.radius) {
 			timer.vel = 0;
-      satellite.acc = new THREE.Vector3(0, 0, 0)
+      		satellite.acc = new THREE.Vector3(0, 0, 0)
 			satellite.vel = new THREE.Vector3(0, 0, 0)
 			satellite.pos = planet.pos.clone().add(planet.pos.clone()
 				.sub(satellite.pos)
@@ -218,11 +217,15 @@ const main = async function () {
 	}
 
 	const buttons = {
-		resetSat: resetSatellite,
+		resetSat: function() {
+			resetSatellite()
+			resetSatellite()
+		},
 		run: function(){ 
 			if (!modeController.travelModeRunning) {
 				satellite.resetVel = satellite.vel.clone()
 				modeController.travelModeRunning = true 
+				timer.vel = 1
 			}
 			
 		},
@@ -342,7 +345,6 @@ const main = async function () {
 			setArrowToVel(satellite, arrowHelper)
 
 			if (modeController.travelModeRunning) {	
-				timer.vel = 1
 
 				updateObjects(satellite, solarSystem.planets, generalControls.gravityConstant, timer, deltaTime)    
 				trail.add(satellite.pos.clone())
@@ -351,10 +353,10 @@ const main = async function () {
 					controls.maxDistance = 3;
 					controls.minDistance = 3;
 				}
-        if(controls.target == closest.pos){
-          controls.maxDistance = 10000;
-          controls.minDistance = 1;
-        }
+				if(controls.target == closest.pos){
+				controls.maxDistance = 10000;
+				controls.minDistance = 1;
+				}
 			}
 			else{
 				timer.lastVel = timer.vel;
