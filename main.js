@@ -143,7 +143,7 @@ const setArrowToVel = function(satellite, arrow) {
 const main = async function () {
 	const generalControls = {
 		gravityConstant: 1,
-		preset: new THREE.Vector4(0, 0, 0, -1),
+		preset: [10.246809049864057, 1.1937240000000011, 4.896345408993087, 0, -0.1, 0, -1],
 	}
 	const modeController = {
 		overviewMode: true,
@@ -225,7 +225,6 @@ const main = async function () {
 		satellite.vel.x = generalControls.preset[3]
 		satellite.vel.y = generalControls.preset[4]
 		satellite.vel.z = generalControls.preset[5]
-		console.log(satellite.pos);
 		satellite.acc = new THREE.Vector3(0, 0, 0)
 	}
 
