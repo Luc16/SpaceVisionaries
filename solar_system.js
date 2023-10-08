@@ -8,15 +8,7 @@ export class SolarSystem {
         const scale = 4000;
         const sunRadius =  4.6524e-3 * sunscale; //TODO: Radio multiplicado por 100
 
-        // const mercuryRadius = 0.0035*sunRadius*1;
-        // const venusRadius = 0.0087*sunRadius*1;
-        // const earthRadius = 0.0092*sunRadius*1;
-        // const marsRadius = 0.0049*sunRadius*1;
-        // const jupiterRadius = 0.1028*sunRadius*1;
-        // const saturnRadius = 0.0866*sunRadius*1;
-        // const uranusRadius = 0.0367*sunRadius*1;
-        // const neptuneRadius = 0.0356*sunRadius*1;
-
+        //planets
         const mercuryRadius = 1.6310e-5 * scale*3.5;
         const venusRadius = 4.0454e-5 * scale*3.5;
         const earthRadius = 4.2633e-5 * scale*3.5;
@@ -25,6 +17,13 @@ export class SolarSystem {
         const saturnRadius = 4.0287e-4 * scale;
         const uranusRadius = 1.7085e-4 * scale*2;
         const neptuneRadius = 1.655e-4 * scale*2;
+
+        //dwarf planets
+        const ceresRadius = 1.6310e-5 * scale*3.5;
+        const plutoRadius = 4.0454e-5 * scale*3.5;
+        const makemakeRadius = 4.2633e-5 * scale*3.5;
+        const haumeaRadius = 2.2714e-5 * scale*3.5;
+        const erisRadius = 2.2714e-5 * scale*3.5;
 
         this.planets = [];
         this.orbits = [];
@@ -36,17 +35,17 @@ export class SolarSystem {
 	
         this.planets.push(
             new Planet(
-                document, scene, new BasicOrbit(scene, 3.87032, 3.78731, 1.59091, 0, 0x9370db),
+                document, scene, new BasicOrbit(scene, 3.87032, 3.78731, 1.59091, 0, 0x9370db, Math.PI/4),
                  "Mercury", 1, mercuryRadius, "resources/textures/mercury_texture.jpg", 0.0008)
         )
         this.planets.push(
             new Planet(
-                document, scene, new BasicOrbit(scene, 7.23262, 7.23244, 0.09358, 0, 0xcd853f),
+                document, scene, new BasicOrbit(scene, 7.23262, 7.23244, 0.09358, 0, 0xcd853f, Math.PI/4),
                 "Venus", 1, venusRadius, "resources/textures/venus_texture.jpg", 0.00065)
         )
         this.planets.push(
             new Planet(
-                document, scene, new BasicOrbit(scene, 10, 9.9985, 0.33422, 0, 0x00ced1),
+                document, scene, new BasicOrbit(scene, 10, 9.9985, 0.33422, 0, 0x00ced1, Math.PI/4),
                 "Earth", 1, earthRadius, "resources/textures/earth_texture.jpg", 0.0006)
         )
         this.planets.push(
@@ -73,6 +72,31 @@ export class SolarSystem {
             new Planet(
                 document, scene, new BasicOrbit(scene, 301.8048, 301.78972, 5.8689, 0, 0x1e90ff),
                 "Neptune", 1, neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 15.2406, 15.17315, 2.8475, 0, 0xa9a9a9),
+                "Ceres", 1, ceresRadius, "resources/textures/ceres_texture.jpg", 0.0025)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 52.0387, 51.97625, 5.0668, 0, 0xa9a9a9),
+                "Pluto", 1, plutoRadius, "resources/textures/pluto_texture.jpg", 0.00225)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 95.72526, 95.5957, 9.9532, 0, 0xa9a9a9),
+                "Haumea", 1, haumeaRadius, "resources/textures/haumea_texture.jpg", 0.0022)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 191.6477, 191.4359, 17.9612, 0, 0xa9a9a9),
+                "Makemake", 1, makemakeRadius, "resources/textures/makemake_texture.jpg", 0.00215)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 301.8048, 301.78972, 5.8689, 0, 0xa9a9a9),
+                "Eris", 1, erisRadius, "resources/textures/eris_texture.jpg", 0.002)
         )
     }
 

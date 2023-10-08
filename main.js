@@ -440,7 +440,6 @@ const main = async function () {
 			}
 		} else {
 			timer.vel = timer.vel;
-			controls.minDistance = 0;
 		}
 	}
 
