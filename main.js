@@ -139,7 +139,7 @@ const updateObjects = function(satellite, planets, gravity, timer, dt) {
 const setArrowToVel = function(satellite, arrow) {
 	arrow.position.copy(satellite.pos.clone())
 	arrow.setDirection(satellite.vel.clone().normalize())
-	arrow.setLength(satellite.vel.clone().length()/10)
+	arrow.setLength(satellite.vel.clone().length())
 }
 
 const main = async function () {
@@ -216,7 +216,9 @@ const main = async function () {
 		if (typeof generalControls.preset === 'string') {
 			generalControls.preset = generalControls.preset.replace("[", "").replace("]", "").split(",").map(Number)
 		}
+		var timeSet = false
 		if (generalControls.preset[6] > 0) {
+			timeSet = true
 			timer.time = generalControls.preset[6]
 		} else {
 			timer.time = timer.simInitTime
@@ -226,9 +228,11 @@ const main = async function () {
 			satellite.resetVel.x = generalControls.preset[3]
 			satellite.resetVel.y = generalControls.preset[4]
 			satellite.resetVel.z = generalControls.preset[5]
-			satellite.resetPos.x = generalControls.preset[0]
-			satellite.resetPos.y = generalControls.preset[1]
-			satellite.resetPos.z = generalControls.preset[2]
+			if (timeSet) {
+				satellite.resetPos.x = generalControls.preset[0]
+				satellite.resetPos.y = generalControls.preset[1]
+				satellite.resetPos.z = generalControls.preset[2]
+			}
 		}
 		satellite.vel = satellite.resetVel.clone()
 		satellite.pos = satellite.resetPos.clone()
