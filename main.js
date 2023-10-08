@@ -265,15 +265,15 @@ const main = async function () {
 	satSettings.add(buttons, "earthCam").name("Switch to Earth View")
 
 	satSettings.add(generalControls, "preset", {
-		"Default": [0, 0, 0, -1],
-		"Pass By Jupter": [1.9208, -5, 0, 564.83], 
-		"Earth Loop": [0, -7.2956900000000005, 0, 1.53184],
+		"Default": [10.246809049864057, 1.1937240000000011, 4.896345408993087, 0, -0.1, 0, -1],
+		// "Pass By Jupter": [4.6656275437475365, 1.193724000000002, 9.49357137884307, 1.9208, -5, 0, 564.83], 
+		// "Earth Loop": [0, -7.2956900000000005, 0, 1.53184],
 	})
 	.onFinishChange(
 		function(){
 			buttons.resetSat()
 		}
-	  )
+	  ).name("Presets")
 
 	satSettings.add(satellite.vel, "x", -5, 5, 0.0001).name("Velocity X").listen()
 	satSettings.add(satellite.vel, "y", -5, 5, 0.0001).name("Velocity Y").listen()
