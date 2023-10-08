@@ -59,8 +59,8 @@ const main = async function() {
 	const satellite = new Satellite([0, 0, 0], [0, 0, 0], 0.1);
 	await satellite.loadModel(scene, "resources/satellite/scene.gltf")
 	
-	var resetPos = new THREE.Vector3(-6, 0, 0)
-	var resetVel = new THREE.Vector3(1, 10, 0)
+	var resetPos = new THREE.Vector3(2, 0, 0)
+	var resetVel = new THREE.Vector3(6, 24, 0)
 	resetSatellite(satellite, resetPos, resetVel);
 
 	const gui = new GUI()
@@ -83,8 +83,8 @@ const main = async function() {
 		simRunning = true;
 	}
 
-	const trail = new Trail(scene, 100, 0x0000ff)
-
+	const trail = new Trail(scene, 100, 0xffffff)
+  var changeCamera = false;
 	document.addEventListener('keydown', (event) => {
 		if (event.code == 'Space') {
 			if (!simRunning){
@@ -97,18 +97,20 @@ const main = async function() {
 			resetSatellite(satellite, resetPos, resetVel)
 			simRunning = false
 		}
+    else if(event.key == 't'){
+      changeCamera = !changeCamera;
+    }
 	
 	}, false);
 
 	const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); 
 	renderer.setSize(window.innerWidth, window.innerHeight);
-
+  
 	document.getElementById("container3D").appendChild(renderer.domElement);
 	camera.position.z = 10;
 	
-
 	const planets = [
-		new Planet(scene, 1, 2, "resources/textures/mars_texture.jpg"), // mars
+		new Planet(scene, 4.5, 2, "resources/textures/mars_texture.jpg"), // mars
 		new Planet(scene, 0.1, 0.8, "resources/textures/moon_texture.jpg").translate([20, 0, 0]), // moon
 	]
 	
@@ -131,7 +133,30 @@ const main = async function() {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 	});
 
-	var then = 0;
+  // var mouse = new THREE.Vector2();
+  // var intersectionPoint = new THREE.Vector3();
+  // var planeNormal =new THREE.Vector3();
+  // var plane = new THREE.Plane();
+  // var raycaster = new THREE.Raycaster();
+  // document.addEventListener('click', (event) => {
+  //   if(simRunning === false){
+  //     console.log(satellite.pos)
+  //     mouse.x = (event.clientX/window.innerWidth)*2 - 1;
+  //     mouse.y = -(event.clientY/window.innerHeight)*2 + 1;
+  //     planeNormal.copy(camera.position).normalize();
+  //     plane.setFromNormalAndCoplanarPoint(planeNormal, planets[0].pos);
+  //     raycaster.setFromCamera(mouse, camera);
+  //     raycaster.ray.intersectPlane(plane, intersectionPoint);
+  //     satellite.pos = intersectionPoint;
+  //   }
+  // }, false);
+
+  // controls.saveState();
+  controls.target = satellite.pos
+  controls.maxDistance = 7;
+  controls.minDistance = 7;  
+	
+  var then = 0;
 	function animate(now) {
 		requestAnimationFrame(animate);
 		now *= 0.001;
@@ -143,18 +168,35 @@ const main = async function() {
 		deltaTime = 1/60;
 		}
 		then = now;
-
-		if (simRunning) {		
-			updateObjects(satellite, planets, deltaTime)
-			trail.add(satellite.pos.clone())
-		} 
-    	setArrowToVel(satellite, arrowHelper)
-
-    
+   
+    setArrowToVel(satellite, arrowHelper)
 		renderer.render(scene, camera);
+	 
+    if (simRunning) {		
+      updateObjects(satellite, planets, deltaTime)    
+      trail.add(satellite.pos.clone())
 
-	};
-	
+      controls.maxDistance = 7;
+      controls.minDistance = 7;   
+    }
+    else{
+      controls.maxDistance = 1000;
+      controls.minDistance = 2;
+    }
+  
+    if(changeCamera){
+      controls.target = satellite.pos;
+      // changeCamera = !changeCamera;
+    }
+    else{
+      controls.target = planets[0].pos; 
+      // changeCamera = !changeCamera;
+    }
+
+    controls.update();
+    
+  };
+
 	animate();
 }
 

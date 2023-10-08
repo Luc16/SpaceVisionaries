@@ -7,7 +7,8 @@ export class Satellite{
         this.acc = new THREE.Vector3(acc);
         this.scale = scale;
         this.object = null;
-
+        this.view_target  = new THREE.Object3D;
+        this.view_follow  = new THREE.Object3D;
     }
 
     set scl(scale) {
