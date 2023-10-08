@@ -4,28 +4,50 @@ import { EffectComposer } from 'https://cdn.skypack.dev/three@0.129.0/examples/j
 import { SSAARenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/SSAARenderPass.js';
 import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/UnrealBloomPass';
 import { ColorCorrectionShader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/shaders/ColorCorrectionShader.js';
 import { CSS2DRenderer, CSS2DObject } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/renderers/CSS2DRenderer.js";
-import { GUI } from "dat.gui" 
+import { GUI } from "dat.gui"
 import { SolarSystem } from './solar_system.js';
 
 
 const main = function () {
 
 	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
+	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000);
+
+	const BLOOM_SCENE = 1;
+
+	const bloomLayer = new THREE.Layers();
+	bloomLayer.set( BLOOM_SCENE );
+
+	const params = {
+		threshold: 0.1,
+		strength: 0.2,
+		radius: 0.1,
+		exposure: 1
+	};
 
 	const renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setPixelRatio(window.devicePixelRatio);
 	document.body.appendChild(renderer.domElement);
+	const gui_container = document.getElementById("gui_container");
 
-	const gui = new GUI()
+	const gui = new GUI({ autoPlace: false });
+	gui.domElement.id = "gui";
+	gui_container.appendChild(gui.domElement);
+	const timeSettings = gui.addFolder("Time Settings");
+	const missions = gui.addFolder("Missions");
 
 	const renderPass = new RenderPass(scene, camera);
 	renderPass.clearAlpha = 0;
 
 	const ssaaRenderPass = new SSAARenderPass(scene, camera);
+	const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+	bloomPass.threshold = params.threshold;
+	bloomPass.strength = params.strength;
+	bloomPass.radius = params.radius;
 	const colorCorrectionPass = new ShaderPass(ColorCorrectionShader);
 	const composer = new EffectComposer(renderer);
 
@@ -34,6 +56,7 @@ const main = function () {
 	composer.addPass(renderPass);
 	composer.addPass(colorCorrectionPass);
 	composer.addPass(ssaaRenderPass);
+	composer.addPass(bloomPass);
 
 	const cubeTextureLoader = new THREE.CubeTextureLoader();
 	scene.background = cubeTextureLoader.load([
@@ -49,7 +72,11 @@ const main = function () {
 
 	const controls = new OrbitControls(camera, renderer.domElement);
 
-	camera.position.z = 5;
+	camera.position.x = 24.375955763295476;
+	camera.position.y = 6.096897081203575;
+	camera.position.z = 19.341372778210438;
+	camera.lookAt([0, 0, 0]);
+
 	controls.update();
 
 	const labelRenderer = new CSS2DRenderer();
@@ -70,63 +97,82 @@ const main = function () {
 	const mouse = new THREE.Vector2();
 	var closest = null;
 
-	document.onmousemove = function(e){
-		mouse.x = ( e.offsetX / window.innerWidth ) * 2 - 1;
-		mouse.y = - ( e.offsetY / window.innerHeight ) * 2 + 1;
-		raycaster.setFromCamera( mouse, camera );
+	document.onmousemove = function (e) {
+		mouse.x = (e.offsetX / window.innerWidth) * 2 - 1;
+		mouse.y = - (e.offsetY / window.innerHeight) * 2 + 1;
+		raycaster.setFromCamera(mouse, camera);
 		const ray = raycaster.ray
 
 		closest = null
 		var closestDist = 1000000;
 		for (const planet of solarSystem.getPlanets()) {
 			const dist = ray.distanceSqToPoint(planet.getPosition())
-			if (dist < closestDist && dist < 2 ){
+			if (dist < closestDist && dist < 2) {
 				closest = planet
 				closestDist = dist
 			} else {
-				planet.orbit.orbitLine.material.color.set(new THREE.Color( planet.orbit.originalColor ));         
+				planet.orbit.orbitLine.material.color.set(new THREE.Color(planet.orbit.originalColor));
 				planet.orbit.orbitLine.material.needsUpdate = true;
 				labelRenderer.domElement.style.color = 'LightGrey'
 			}
 		}
 
 		const dist = ray.distanceSqToPoint(solarSystem.sun.getPosition())
-		if (dist < closestDist && dist < 2 || closest == null ){
+		if (dist < closestDist && dist < 2) {
 			closest = solarSystem.sun
 			closestDist = dist
 		} else {
 			labelRenderer.domElement.style.color = 'LightGrey'
 		}
 
-		closest.orbit.orbitLine.material.color.set(new THREE.Color( 0xffffff ));         
+		closest.orbit.orbitLine.material.color.set(new THREE.Color(0xffffff));
 		closest.orbit.orbitLine.material.needsUpdate = true;
 		labelRenderer.domElement.style.color = 'white'
-		
+
 
 	}
 
 	const raycaster = new THREE.Raycaster();
-	const timer = {time: 0, vel: 1}
+	const timer = { time: 0, vel: 1, lastVel: 1 };
 
 
-	document.onclick = function() {
+	document.onclick = function () {
 		if (closest != null) {
 			if (closest.name != 'Sun') {
+				timer.lastVel = timer.vel;
 				timer.vel = 0
 			} else {
-				timer.vel = 1
+				timer.vel = timer.lastVel;
 			}
-			controls.target = closest.getPosition()
+			controls.target.copy(closest.getPosition())
+			controls.minDistance = closest.radius*5;
+			controls.enablePan = false;
+			controls.update();
 		} else {
-			timer.vel = 1
+			if (timer.vel == 0) {
+				timer.vel = timer.lastVel;
+			}
+			timer.vel = timer.vel;
+			controls.enablePan = true;
+			constrols.minDistance = 0;
 		}
 
 	}
 
+	// document.onwheel = function() {
+	// 	if (controls.getDistance() > 5) {
+	// 		controls.getDistance()
+	// 	}
+	// }
 
+	timeSettings.add(timer, "time", 0, 1000, 0.01).name("time").listen()
+	timeSettings.add(timer, "vel", 0, 5, 0.01).name("velocity").listen()
 
-	gui.add(timer, "time", 0, 1000, 0.01).name("time").listen()
-	gui.add(timer, "vel", 0, 5, 0.01).name("velocity").listen()
+	// scene.add( new THREE.AmbientLight( 0xcccccc ) );
+
+	//const pointLight = new THREE.PointLight( 0xffffff, 100 );
+	//camera.add( pointLight );
+
 
 	var then = 0;
 	function animate(now) {
@@ -139,7 +185,7 @@ const main = function () {
 			timer.time = 0
 		}
 		then = now;
-		timer.time += timer.vel*deltaTime
+		timer.time += timer.vel * deltaTime
 
 		if (timer.time) {
 			solarSystem.move(timer.time);
@@ -155,7 +201,6 @@ const main = function () {
 	};
 
 	animate();
-
 
 	function onWindowResize() {
 

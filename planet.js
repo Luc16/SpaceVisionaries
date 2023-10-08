@@ -5,6 +5,7 @@ export class Planet {
     constructor(document, scene, orbit, name, radius, texturePath, v) {
         this.name = name;
         this.orbit = orbit;
+        this.radius = radius;
         //initializing material
         this.material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(texturePath) });
 

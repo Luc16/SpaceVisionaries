@@ -5,9 +5,20 @@
 		<title>My first three.js app</title>
 		<style>
 			body { margin: 0; }
+			#gui_container{
+				position: absolute;
+				top: 10%;
+				right: 5%;
+				scale: 130%;
+				z-index: 100;
+			}
+			#gui{
+				z-index: 100;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="gui_container"></div>
 		<script type="module" src="/main.js"></script>
 	</body>
 </html>
