@@ -9,6 +9,8 @@ import { ColorCorrectionShader } from 'https://cdn.skypack.dev/three@0.129.0/exa
 import { CSS2DRenderer, CSS2DObject } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/renderers/CSS2DRenderer.js";
 import { GUI } from "dat.gui"
 import { SolarSystem } from './solar_system.js';
+import { Vector3 } from "three";
+import gsap from 'https://cdn.skypack.dev/gsap';
 
 
 const main = function () {
@@ -23,7 +25,7 @@ const main = function () {
 
 	const params = {
 		threshold: 0.1,
-		strength: 0.2,
+		strength: 0.3,
 		radius: 0.1,
 		exposure: 1
 	};
@@ -77,6 +79,8 @@ const main = function () {
 	camera.position.z = 19.341372778210438;
 	camera.lookAt([0, 0, 0]);
 
+	controls.minDistance = solarSystem.sun.radius*5;
+	// controls.enablePan = false;
 	controls.update();
 
 	const labelRenderer = new CSS2DRenderer();
@@ -91,6 +95,8 @@ const main = function () {
 	controls.listenToKeyEvents(window);
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.1
+
+	
 
 	window.addEventListener('resize', onWindowResize);
 
@@ -142,19 +148,62 @@ const main = function () {
 				timer.lastVel = timer.vel;
 				timer.vel = 0
 			} else {
-				timer.vel = timer.lastVel;
+				if ( timer.lastVel != 0 ) {
+					timer.vel = timer.lastVel;
+				} else {
+					timer.vel = 1
+				}
+				
 			}
+			
 			controls.target.copy(closest.getPosition())
 			controls.minDistance = closest.radius*5;
 			controls.enablePan = false;
+			controls.update();
+
+			console.log(camera.position)
+			const auxVector = new Vector3(camera.position.x, camera.position.y, camera.position.z)
+			
+			console.log(auxVector)
+			console.log(closest.getPosition())
+			auxVector.sub(closest.getPosition());
+			console.log(auxVector)
+			auxVector.normalize();
+			console.log(auxVector)
+			console.log(closest.radius)
+			auxVector.multiplyScalar(closest.radius*3);
+			console.log(auxVector)
+			const aux = new Vector3(closest.getPosition().x, closest.getPosition().y, closest.getPosition().z); 
+			auxVector.copy(aux.add(auxVector));
+			console.log(auxVector)
+
+			gsap.to(camera.position, {
+				x: auxVector.x,
+				y: auxVector.y,
+				z: auxVector.z,
+				duration: 1.5,
+				onUpdate: function () {
+					camera.lookAt(closest.getPosition());
+				}
+			})
+
+			// camera.position.set(auxVector.x, auxVector.y, auxVector.z)
+
+			// console.log(camera.position)
+			// console.log(closest.getPosition())
+			// camera.lookAt();
+
 			controls.update();
 		} else {
 			if (timer.vel == 0) {
 				timer.vel = timer.lastVel;
 			}
+			if ( timer.lastVel == 0 ) {
+				timer.vel = 1
+			}
 			timer.vel = timer.vel;
 			controls.enablePan = true;
-			constrols.minDistance = 0;
+			controls.minDistance = 0;
 		}
 
 	}
