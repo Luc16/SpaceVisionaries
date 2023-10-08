@@ -2,8 +2,9 @@ import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module
 import { CSS2DObject } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/renderers/CSS2DRenderer.js";
 
 export class Planet {
-    constructor(document, scene, name, radius, texturePath, v) {
+    constructor(document, scene, orbit, name, radius, texturePath, v) {
         this.name = name;
+        this.orbit = orbit;
         //initializing material
         this.material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(texturePath) });
 
@@ -31,10 +32,10 @@ export class Planet {
         return this.sphere;
     }
 
-    movePlanet(orbit, time) {
+    movePlanet(time) {
 
         let oldPosition = this.getPosition().toArray();
-        let newPosition = orbit.getPoint(this.orbitComplete).toArray();
+        let newPosition = this.orbit.getPoint(this.orbitComplete).toArray();
         this.translate([newPosition[0] - oldPosition[0], oldPosition[1], newPosition[1] - oldPosition[2]]);
         // console.log(newPosition);
         const T = 1/this.v;

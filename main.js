@@ -6,7 +6,7 @@ import { RenderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/p
 import { ShaderPass } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/postprocessing/ShaderPass.js';
 import { ColorCorrectionShader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/shaders/ColorCorrectionShader.js';
 import { CSS2DRenderer, CSS2DObject } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/renderers/CSS2DRenderer.js";
-
+import { GUI } from "dat.gui" 
 import { SolarSystem } from './solar_system.js';
 
 
@@ -19,6 +19,8 @@ const main = function () {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setPixelRatio(window.devicePixelRatio);
 	document.body.appendChild(renderer.domElement);
+
+	const gui = new GUI()
 
 	const renderPass = new RenderPass(scene, camera);
 	renderPass.clearAlpha = 0;
@@ -43,8 +45,7 @@ const main = function () {
 		"resources/textures/stars_skybox.jpg"
 	]);
 
-	const solarSystem = new SolarSystem(document,scene)
-	solarSystem.drawOrbits(scene);
+	const solarSystem = new SolarSystem(document, scene)
 
 	const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -57,15 +58,8 @@ const main = function () {
 	labelRenderer.domElement.style.top = '0px';
 	labelRenderer.domElement.style.pointerEvents = 'none';
 	labelRenderer.domElement.style.fontSize = 10000;
-	labelRenderer.domElement.style.color = 'white'
+	labelRenderer.domElement.style.color = 'LightGrey'
 	document.body.appendChild(labelRenderer.domElement);
-
-	controls.keys = {
-		LEFT: 'ArrowLeft', //left arrow
-		UP: 'ArrowUp', // up arrow
-		RIGHT: 'ArrowRight', // right arrow
-		BOTTOM: 'ArrowDown' // down arrow
-	}
 
 	controls.listenToKeyEvents(window);
 	controls.enableDamping = true;
@@ -73,9 +67,67 @@ const main = function () {
 
 	window.addEventListener('resize', onWindowResize);
 
+	const mouse = new THREE.Vector2();
+	var closest = null;
 
-	var simulationVel = 1;
-	var time = 0;
+	document.onmousemove = function(e){
+		mouse.x = ( e.offsetX / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( e.offsetY / window.innerHeight ) * 2 + 1;
+		raycaster.setFromCamera( mouse, camera );
+		const ray = raycaster.ray
+
+		closest = null
+		var closestDist = 1000000;
+		for (const planet of solarSystem.getPlanets()) {
+			const dist = ray.distanceSqToPoint(planet.getPosition())
+			if (dist < closestDist && dist < 2 ){
+				closest = planet
+				closestDist = dist
+			} else {
+				planet.orbit.orbitLine.material.color.set(new THREE.Color( planet.orbit.originalColor ));         
+				planet.orbit.orbitLine.material.needsUpdate = true;
+				labelRenderer.domElement.style.color = 'LightGrey'
+			}
+		}
+
+		const dist = ray.distanceSqToPoint(solarSystem.sun.getPosition())
+		if (dist < closestDist && dist < 2 || closest == null ){
+			closest = solarSystem.sun
+			closestDist = dist
+		} else {
+			labelRenderer.domElement.style.color = 'LightGrey'
+		}
+
+		closest.orbit.orbitLine.material.color.set(new THREE.Color( 0xffffff ));         
+		closest.orbit.orbitLine.material.needsUpdate = true;
+		labelRenderer.domElement.style.color = 'white'
+		
+
+	}
+
+	const raycaster = new THREE.Raycaster();
+	const timer = {time: 0, vel: 1}
+
+
+	document.onclick = function() {
+		if (closest != null) {
+			if (closest.name != 'Sun') {
+				timer.vel = 0
+			} else {
+				timer.vel = 1
+			}
+			controls.target = closest.getPosition()
+		} else {
+			timer.vel = 1
+		}
+
+	}
+
+
+
+	gui.add(timer, "time", 0, 1000, 0.01).name("time").listen()
+	gui.add(timer, "vel", 0, 5, 0.01).name("velocity").listen()
+
 	var then = 0;
 	function animate(now) {
 		requestAnimationFrame(animate);
@@ -84,10 +136,14 @@ const main = function () {
 		var deltaTime = now - then;
 		if (!deltaTime) {
 			deltaTime = 0
+			timer.time = 0
 		}
 		then = now;
+		timer.time += timer.vel*deltaTime
 
-		solarSystem.move(now);
+		if (timer.time) {
+			solarSystem.move(timer.time);
+		}
 
 		controls.update()
 

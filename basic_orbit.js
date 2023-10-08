@@ -12,10 +12,11 @@ export class BasicOrbit{
         this.points = this.path.getPoints(100);
         const geometry = new THREE.BufferGeometry().setFromPoints(this.points);
         const material = new THREE.LineBasicMaterial({ color: color });
-        const orbit = new THREE.Line(geometry, material);
-        orbit.rotateX(Math.PI/2);
-        orbit.renderOrder = 1000;
-        scene.add(orbit);
+        this.originalColor = color
+        this.orbitLine = new THREE.Line(geometry, material);
+        this.orbitLine.rotateX(Math.PI/2);
+        this.orbitLine.renderOrder = 1000;
+        scene.add(this.orbitLine);
     }
 
     getPoint(t) {
