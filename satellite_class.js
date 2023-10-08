@@ -5,8 +5,8 @@ export class Satellite{
     constructor(vel, acc, scale, resetPos, resetVel){
         this.resetPos = resetPos
         this.resetVel = resetVel
-        this.velocity = new THREE.Vector3(vel);
-        this.acc = new THREE.Vector3(acc);
+        this.velocity = vel;
+        this.acc = acc;
         this.scale = scale;
         this.object = null;
         this.view_target  = new THREE.Object3D;
