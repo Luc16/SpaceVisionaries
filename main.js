@@ -112,7 +112,7 @@ const updateObjects = function(satellite, planets, dt) {
 			planet.pos.clone()
 			.sub(satellite.pos)
 			.normalize()
-			.multiplyScalar(50*planet.mass/(satellite.pos.distanceToSquared(planet.pos)))
+			.multiplyScalar(0.01*planet.mass/(satellite.pos.distanceToSquared(planet.pos)))
 		)
 	}
 	
@@ -140,11 +140,7 @@ const setArrowToVel = function(satellite, arrow) {
 	arrow.setLength(satellite.vel.clone().length()/10)
 }
 
-const resetSatellite = function (satellite, resetPos, resetVel) {
-	satellite.vel = resetVel.clone()
-	satellite.pos = resetPos.clone()
-	satellite.acc = new THREE.Vector3(0, 0, 0)
-}
+
 
 const main = async function () {
 	const modeController = {
@@ -161,20 +157,13 @@ const main = async function () {
 		lastVel: 1 
 	};
 
+	
+
 
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 2000);
 
 	const [renderer, gui] = createGuiAndRenderer()
-	const missions = gui.addFolder("Missions");
-	const g = missions.add(modeController, "activateGalatic").name("Galatic Travel")
-	const k = missions.add(modeController, "activateTerrestrial").name("Terrestrial Travel")
-
-	const timeSettings = gui.addFolder("Time Settings");
-	timeSettings.add(timer, "time", 0, 1000, 0.01).name("time").listen()
-	timeSettings.add(timer, "vel", 0, 5, 0.01).name("velocity").listen()
-
-	
 
 	const composer = createComposer(scene, camera, renderer)
 	const solarSystem = new SolarSystem(document, scene)
@@ -183,14 +172,55 @@ const main = async function () {
 
 	applyInitialParams(camera, controls, solarSystem.sun)
 
-	const satellite = new Satellite([0, 0, 0], [0, 0, 0], 0.1);
+	const satellite = new Satellite([0, 0, 0], [0, 0, 0], 0.1, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, -0.1, 0));
 	await satellite.loadModel(scene, "resources/satellite/scene.gltf")
-	var resetPos = new THREE.Vector3(-8, 0, 0)
-	var resetVel = new THREE.Vector3(2.5, -9.8, 0)
-	resetSatellite(satellite, resetPos, resetVel);
 	const trail = new Trail(scene, 100, 0xffffff)
 	var arrowHelper = new THREE.ArrowHelper(satellite.vel.clone().normalize(), satellite.pos.clone(), satellite.vel.clone().length()/10, 0xff0000 );
 	scene.add( arrowHelper );
+
+	const resetSatellite = function () {
+		trail.reset()
+		modeController.terModeRunning = false
+		satellite.vel = satellite.resetVel.clone()
+		satellite.pos = satellite.resetPos.clone()
+		satellite.acc = new THREE.Vector3(0, 0, 0)
+	}
+
+	const buttons = {
+		resetSat: resetSatellite,
+		run: function(){ 
+			satellite.resetVel = satellite.vel.clone()
+			modeController.terModeRunning = true 
+		}
+	}
+
+	resetSatellite();
+	
+	// create guis
+	const missions = gui.addFolder("Missions");
+	missions.open()
+	missions.add(modeController, "activateGalatic").name("Galatic Travel")
+	missions.add(modeController, "activateTerrestrial").name("Terrestrial Travel")
+
+	const timeSettings = gui.addFolder("Time Settings");
+	timeSettings.open()
+	timeSettings.add(timer, "time", 0, 1000, 0.01).name("time").listen()
+	timeSettings.add(timer, "vel", 0, 5, 0.01).name("velocity").listen()
+
+	const satSettings = gui.addFolder("Controls");
+	satSettings.hide()
+	satSettings.add(satellite, "scl", 0, 1, 0.01).name("Scale").listen()
+
+	satSettings.add(satellite.pos, "x", -1, 1, 0.0001).name("Position X").listen()
+	satSettings.add(satellite.pos, "y", -1, 1, 0.0001).name("Position Y").listen()
+	satSettings.add(satellite.pos, "z", -1, 1, 0.0001).name("Position Z").listen()
+
+	satSettings.add(satellite.vel, "x", -1, 1, 0.0001).name("Velocity X").listen()
+	satSettings.add(satellite.vel, "y", -1, 1, 0.0001).name("Velocity Y").listen()
+	satSettings.add(satellite.vel, "z", -1, 1, 0.0001).name("Velocity Z").listen()
+
+	satSettings.add(buttons, "resetSat").name("Reset")
+	satSettings.add(buttons, "run").name("Launch")
 
 	// set callbacks
 	window.addEventListener('resize', onWindowResize);
@@ -201,16 +231,16 @@ const main = async function () {
 	window.onfocus = function(ev){ modeController.terModeRunning = true; }
 	document.addEventListener('keydown', (event) => {
 		if (event.code == 'Space') {
-			if (!simRunning){
+			if (!modeController.terModeRunning){
 				resetVel = satellite.vel.clone()
 			}
-			simRunning = !simRunning
+			modeController.terModeRunning = !modeController.terModeRunning
 		} 
 		else if (event.key == 'r') {
 		  location.reload()
     }
     else if(event.key == 't'){
-      changeCamera = !changeCamera;
+      modeController.changeCamera = !modeController.changeCamera;
     }
 	
 	}, false);
@@ -225,8 +255,6 @@ const main = async function () {
 
 	const ambientLight = new THREE.AmbientLight(0xffffff, 5);
 	scene.add(ambientLight);
-
-	// scene.add( new THREE.AmbientLight( 0xcccccc ) );
 
 	//const pointLight = new THREE.PointLight( 0xffffff, 100 );
 	//camera.add( pointLight );
@@ -245,20 +273,32 @@ const main = async function () {
 		then = now;
 		timer.time += timer.vel * deltaTime;
 
+		// switch mode
 		if (modeController.prevMode != modeController.galaticMode){
+			trail.reset()
+
 			modeController.prevMode = modeController.galaticMode;
 			if (!modeController.galaticMode) {
 				closest = solarSystem.planets[2] // earth
 				zoomIn(false, 12)
+				satellite.resetPos = closest.pos.clone().add(new Vector3(0.08, 0.08, 0))
 				satellite.pos = closest.pos.clone().add(new Vector3(0.08, 0.08, 0)) 
 				setArrowToVel(satellite, arrowHelper)
 				satellite.scl = 0.002
+				modeController.terModeRunning = false
+
+				timeSettings.hide()
+				satSettings.show()
+				satSettings.open()
+
 
 				document.onmousemove = function(){};
 				document.onclick = function(){};
 				document.onwheel = function(){}
 
 			} else {
+				timeSettings.show()
+				satSettings.hide()
 				closest = solarSystem.sun // earth
 				zoomIn(false, 100)
 				document.onmousemove = onMouseMove;
@@ -266,10 +306,41 @@ const main = async function () {
 				document.onwheel = onWheel()
 			}
 		}
+
+		if (modeController.galaticMode) {
+			if (timer.time) {
+				solarSystem.move(timer.time);
+			}
+		} else {
+			setArrowToVel(satellite, arrowHelper)
+
+			if (modeController.terModeRunning) {	
+
+				updateObjects(satellite, [solarSystem.planets[2]], deltaTime)    
+				trail.add(satellite.pos.clone())
+
+				if(controls.target == satellite.pos){
+					controls.maxDistance = 0.1;
+					controls.minDistance = 0.1;
+				}
+			}
+			else{
+				controls.maxDistance = 1000;
+				controls.minDistance = 0.5;
+			}
 		
-		if (timer.time) {
-			solarSystem.move(timer.time);
+			if(modeController.changeCamera){
+				controls.target = satellite.pos;
+			}
+			else{
+				controls.target = solarSystem.planets[2].pos; 
+			}
+
+			controls.update()
+
 		}
+		
+		
 
 		labelRenderer.render(scene, camera);
 
@@ -349,9 +420,10 @@ const main = async function () {
 					.normalize()
 					.multiplyScalar(closest.radius*zoom))
 
-				var p = closest.pos
+				var p = closest.pos.clone()
 				while(closest.pos != p && fromClick) {
-					p = closest.pos
+					console.log(p);
+					p = closest.pos.clone()
 				}
 				
 				gsap.to(camera.position, {
@@ -361,10 +433,8 @@ const main = async function () {
 					duration: 1.5,
 					onUpdate: function () {
 						camera.lookAt(closest.pos);
-						let vec1 = camera.position.clone();
-						let vec2 = controls.target.clone();
-						let norm = vec1.sub(vec2).length();
-						range = norm*0.1;					}
+						onWheel();
+					}
 				})
 				controls.update();
 				targetName = closest.name;
@@ -385,6 +455,7 @@ const main = async function () {
 		let norm = vec1.sub(vec2).length();
 		range = norm*0.1;
 	}
+
 }
 
 await main()

@@ -2,7 +2,9 @@ import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
 
 export class Satellite{
-    constructor(vel, acc, scale){
+    constructor(vel, acc, scale, resetPos, resetVel){
+        this.resetPos = resetPos
+        this.resetVel = resetVel
         this.velocity = new THREE.Vector3(vel);
         this.acc = new THREE.Vector3(acc);
         this.scale = scale;
