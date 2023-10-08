@@ -102,7 +102,7 @@ function applyInitialParams(camera, controler, sun) {
 	controler.listenToKeyEvents(window);
 	controler.enableDamping = true;
 	controler.dampingFactor = 0.1
-	controler.maxDistance = 1000;
+	controler.maxDistance = 2000;
 
 }
 
@@ -161,7 +161,7 @@ const main = async function () {
 
 
 	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 2000);
+	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 3000);
 
 	const [renderer, gui] = createGuiAndRenderer()
 
