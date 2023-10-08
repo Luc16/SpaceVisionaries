@@ -123,7 +123,7 @@ const updateObjects = function(satellite, planets, gravity, timer, dt) {
 	for (const planet of planets) {
 		if (satellite.pos.distanceToSquared(planet.pos) <= planet.radius*planet.radius) {
 			timer.vel = 0;
-			satellite.acc = new THREE.Vector3(0, 0, 0)
+      satellite.acc = new THREE.Vector3(0, 0, 0)
 			satellite.vel = new THREE.Vector3(0, 0, 0)
 			satellite.pos = planet.pos.clone().add(planet.pos.clone()
 				.sub(satellite.pos)
@@ -204,8 +204,8 @@ const main = async function () {
 
 	const resetSatellite = function () {
 		controls.target = solarSystem.planets[2].pos
-		controls.maxDistance = solarSystem.planets[2].radius*12;
-		controls.minDistance = solarSystem.planets[2].radius*12;
+		controls.maxDistance = solarSystem.planets[2].radius*10;
+		controls.minDistance = solarSystem.planets[2].radius*10;
 		controls.update();
 		modeController.changeCamera = false;
 		modeController.travelModeRunning = false
@@ -359,7 +359,7 @@ const main = async function () {
 			else{
 				timer.lastVel = timer.vel;
 				timer.vel = 0;
-				controls.maxDistance = 1000;
+				controls.maxDistance = 10000;
 				controls.minDistance = 0.2;
 			}
 		
@@ -367,13 +367,14 @@ const main = async function () {
 				controls.target = satellite.pos;
 			}
 			else{
-				controls.target = solarSystem.planets[2].pos; 
+				controls.target = solarSystem.planets[2].pos;
 			}
 
 		} else {
 			satellite.resetPos = solarSystem.planets[2].pos.clone().add(new THREE.Vector3(solarSystem.planets[2].radius*2, solarSystem.planets[2].radius*2, 0))
-
+      
 			satellite.pos = satellite.resetPos.clone() 
+      setArrowToVel(satellite, arrowHelper)
 		}
 		if (timer.time) {
 			solarSystem.move(timer.time);
