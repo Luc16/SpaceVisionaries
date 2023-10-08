@@ -322,7 +322,7 @@ const main = async function () {
 	function animate(now) {
 		requestAnimationFrame(animate);
 
-		now *= 0.001;
+		now *= 0.0005;
 		var deltaTime = now - then;
 		if (!deltaTime) {
 			deltaTime = 0;
@@ -377,7 +377,7 @@ const main = async function () {
 				document.onmousemove = onMouseMove;
 				document.onclick = onClick;
 				document.onwheel = onWheel
-				generalControls.preset = [10.246809049864057, 1.1937240000000011, 4.896345408993087, 0, -0.1, 0, -1],
+				generalControls.preset = [10.246809049864057, 1.1937240000000011, 4.896345408993087, 0, -0.1, 0, -1]
 
 			}
 		}
