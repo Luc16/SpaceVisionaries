@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>satelite</title>
-	<link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <header>
-    </header>
-
-    <main>
-      <div id="container3D" width="100vw" height="100vh"></div>
-    </main>
-
-    <script type="module" src="main.js"></script>
-	<script type="module" src="satellite_class.js"></script>
-  </body>
+	<head lang="en">
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			#gui_container{
+				position: absolute;
+				top: 10%;
+				right: 5%;
+				scale: 130%;
+				z-index: 100;
+			}
+			#gui{
+				z-index: 100;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="gui_container"></div>
+		<script type="module" src="/main.js"></script>
+	</body>
 </html>
