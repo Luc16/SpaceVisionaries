@@ -172,7 +172,7 @@ const main = async function () {
 
 	applyInitialParams(camera, controls, solarSystem.sun)
 
-	const satellite = new Satellite([0, 0, 0], [0, 0, 0], 0.1, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, -0.1, 0));
+	const satellite = new Satellite([0, 0, 0], [0, 0, 0], 0.0001, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, -0.1, 0));
 	await satellite.loadModel(scene, "resources/satellite/scene.gltf")
 	const trail = new Trail(scene, 100, 0xffffff)
 	var arrowHelper = new THREE.ArrowHelper(satellite.vel.clone().normalize(), satellite.pos.clone(), satellite.vel.clone().length()/10, 0xff0000 );
@@ -180,6 +180,7 @@ const main = async function () {
 
 	const resetSatellite = function () {
 		trail.reset()
+		modeController.changeCamera = false;
 		modeController.terModeRunning = false
 		satellite.vel = satellite.resetVel.clone()
 		satellite.pos = satellite.resetPos.clone()
@@ -209,6 +210,8 @@ const main = async function () {
 
 	const satSettings = gui.addFolder("Controls");
 	satSettings.hide()
+	satSettings.add(buttons, "run").name("Launch")
+	satSettings.add(buttons, "resetSat").name("Reset")
 	satSettings.add(satellite, "scl", 0, 1, 0.01).name("Scale").listen()
 
 	satSettings.add(satellite.pos, "x", -1, 1, 0.0001).name("Position X").listen()
@@ -219,8 +222,7 @@ const main = async function () {
 	satSettings.add(satellite.vel, "y", -1, 1, 0.0001).name("Velocity Y").listen()
 	satSettings.add(satellite.vel, "z", -1, 1, 0.0001).name("Velocity Z").listen()
 
-	satSettings.add(buttons, "resetSat").name("Reset")
-	satSettings.add(buttons, "run").name("Launch")
+	
 
 	// set callbacks
 	window.addEventListener('resize', onWindowResize);
@@ -280,7 +282,7 @@ const main = async function () {
 			modeController.prevMode = modeController.galaticMode;
 			if (!modeController.galaticMode) {
 				closest = solarSystem.planets[2] // earth
-				zoomIn(false, 12)
+				zoomIn(12)
 				satellite.resetPos = closest.pos.clone().add(new Vector3(0.08, 0.08, 0))
 				satellite.pos = closest.pos.clone().add(new Vector3(0.08, 0.08, 0)) 
 				setArrowToVel(satellite, arrowHelper)
@@ -300,10 +302,10 @@ const main = async function () {
 				timeSettings.show()
 				satSettings.hide()
 				closest = solarSystem.sun // earth
-				zoomIn(false, 100)
+				zoomIn(20)
 				document.onmousemove = onMouseMove;
 				document.onclick = onClick;
-				document.onwheel = onWheel()
+				document.onwheel = onWheel
 			}
 		}
 
@@ -396,7 +398,7 @@ const main = async function () {
 		
 	}
 
-	function zoomIn(fromClick, zoom) {
+	function zoomIn(zoom) {
 		if (closest != null) {
 			if (closest.name != 'Sun') {
 				timer.lastVel = timer.vel;
@@ -419,13 +421,7 @@ const main = async function () {
 					.sub(closest.pos)
 					.normalize()
 					.multiplyScalar(closest.radius*zoom))
-
-				var p = closest.pos.clone()
-				while(closest.pos != p && fromClick) {
-					console.log(p);
-					p = closest.pos.clone()
-				}
-				
+	
 				gsap.to(camera.position, {
 					x: auxVector.x,
 					y: auxVector.y,
@@ -446,7 +442,7 @@ const main = async function () {
 	}
 
 	function onClick() {
-		zoomIn(true, 3)
+		zoomIn(3)
 	}
 
 	function onWheel() {
