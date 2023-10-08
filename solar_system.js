@@ -81,31 +81,31 @@ export class SolarSystem {
                 document, scene, new BasicOrbit(scene, 301.8048, 301.78972, 5.8689, 0, 0x1e90ff, 1.8*Math.PI/180),
                 "Neptune", 1.6*(4*Math.PI*3.5*3.5*neptuneRadius*neptuneRadius/12), neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001)
         )
-        // this.planets.push(
-        //     new Planet(
-        //         document, scene, new BasicOrbit(scene, 15.2406, 15.17315, 2.8475, 0, 0xa9a9a9, 0.45*Math.PI/180),
-        //         "Ceres", 1, ceresRadius, "resources/textures/ceres_texture.jpg", 0.0025)
-        // )
-        // this.planets.push(
-        //     new Planet(
-        //         document, scene, new BasicOrbit(scene, 52.0387, 51.97625, 5.0668, 0, 0xa9a9a9, 17.8*Math.PI/180),
-        //         "Pluto", 1, plutoRadius, "resources/textures/pluto_texture.jpg", 0.00225)
-        // )
-        // this.planets.push(
-        //     new Planet(
-        //         document, scene, new BasicOrbit(scene, 95.72526, 95.5957, 9.9532, 0, 0xa9a9a9, 0.78),
-        //         "Haumea", 1, haumeaRadius, "resources/textures/haumea_texture.jpg", 0.0022)
-        // )
-        // this.planets.push(
-        //     new Planet(
-        //         document, scene, new BasicOrbit(scene, 191.6477, 191.4359, 17.9612, 0, 0xa9a9a9, 0.91),
-        //         "Makemake", 1, makemakeRadius, "resources/textures/makemake_texture.jpg", 0.00215)
-        // )
-        // this.planets.push(
-        //     new Planet(
-        //         document, scene, new BasicOrbit(scene, 301.8048, 301.78972, 5.8689, 0, 0xa9a9a9, 0.76),
-        //         "Eris", 1, erisRadius, "resources/textures/eris_texture.jpg", 0.002)
-        // )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 27.658, 27.5737, 2.1573, 0, 0xa9a9a9, 10.587*Math.PI/180),
+                "Ceres", 1, ceresRadius, "resources/textures/ceres_texture.jpg", 0.00035)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 394.821, 382.4027, 98.2433, 0, 0xa9a9a9, 17.15*Math.PI/180),
+                "Pluto", 1, plutoRadius, "resources/textures/pluto_texture.jpg", 0.00025)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 433.4, 425.5888, 81.9126, 0, 0xa9a9a9, 28.19*Math.PI/180),
+                "Haumea", 1, haumeaRadius, "resources/textures/haumea_texture.jpg", 0.00022)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, -457.9, -452.07486, -72.80, 0, 0xa9a9a9, 28.96*Math.PI/180),
+                "Makemake", 1, makemakeRadius, "resources/textures/makemake_texture.jpg", 0.000215)
+        )
+        this.planets.push(
+            new Planet(
+                document, scene, new BasicOrbit(scene, 676.7, 607.086, 298.945, 0, 0xa9a9a9, -44.187*Math.PI/180),
+                "Eris", 1, erisRadius, "resources/textures/eris_texture.jpg", 0.0002)
+        )
     }
 
     getPlanets() {

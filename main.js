@@ -13,6 +13,8 @@ import { Satellite } from './satellite_class.js';
 import { Trail } from "./trail.js";
 import gsap from 'https://cdn.skypack.dev/gsap';
 
+var changedPreset = false;
+
 function createLabelRenderer() {
 	const labelRenderer = new CSS2DRenderer();
 	labelRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -210,22 +212,30 @@ const main = async function () {
 		modeController.changeCamera = false;
 		modeController.travelModeRunning = false
 		trail.reset()
-		satellite.vel = satellite.resetVel.clone()
 
 		if (typeof generalControls.preset === 'string') {
 			generalControls.preset = generalControls.preset.replace("[", "").replace("]", "").split(",").map(Number)
 		}
 		if (generalControls.preset[6] > 0) {
-			timer.time = generalControls.preset[3]
+			timer.time = generalControls.preset[6]
 		} else {
 			timer.time = timer.simInitTime
 		}
 
+		if (changedPreset) {
+			satellite.resetVel.x = generalControls.preset[3]
+			satellite.resetVel.y = generalControls.preset[4]
+			satellite.resetVel.z = generalControls.preset[5]
+			satellite.resetPos.x = generalControls.preset[0]
+			satellite.resetPos.y = generalControls.preset[1]
+			satellite.resetPos.z = generalControls.preset[2]
+		}
+		satellite.vel = satellite.resetVel.clone()
 		satellite.pos = satellite.resetPos.clone()
-		satellite.vel.x = generalControls.preset[3]
-		satellite.vel.y = generalControls.preset[4]
-		satellite.vel.z = generalControls.preset[5]
+
+
 		satellite.acc = new THREE.Vector3(0, 0, 0)
+		changedPreset = false
 	}
 
 	const buttons = {
@@ -270,6 +280,7 @@ const main = async function () {
 	})
 	.onFinishChange(
 		function(){
+			changedPreset = true
 			buttons.resetSat()
 		}
 	  ).name("Presets")
