@@ -348,9 +348,13 @@ const main = async function () {
 				trail.add(satellite.pos.clone())
 
 				if(controls.target == satellite.pos){
-					controls.maxDistance = 1;
-					controls.minDistance = 1;
+					controls.maxDistance = 3;
+					controls.minDistance = 3;
 				}
+        if(controls.target == closest.pos){
+          controls.maxDistance = 10000;
+          controls.minDistance = 1;
+        }
 			}
 			else{
 				timer.lastVel = timer.vel;
