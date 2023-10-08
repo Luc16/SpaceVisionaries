@@ -226,6 +226,8 @@ const main = async function () {
 				satellite.resetVel = satellite.vel.clone()
 				modeController.travelModeRunning = true 
 				timer.vel = 1
+				console.log(satellite.vel);
+				console.log(timer.time);
 			}
 			
 		},
