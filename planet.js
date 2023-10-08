@@ -1,5 +1,8 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
 import { CSS2DObject } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/renderers/CSS2DRenderer.js";
+import { Vector3 } from "three";
+import { Vector4 } from "three";
+
 
 export class Planet {
     constructor(document, scene, orbit, name, mass, radius, texturePath, v){
@@ -35,24 +38,22 @@ export class Planet {
     }
 
     movePlanet(time) {
+        let newPosition = new Vector3();
+        this.orbit.getPoint(this.orbitComplete, newPosition);
+        this.pos = newPosition;
+        this.sphere.position.applyMatrix4(this.orbit.getLine().matrixWorld);
 
-        let oldPosition = this.pos.toArray();
-        let newPosition = this.orbit.getPoint(this.orbitComplete).toArray();
-        this.translate([newPosition[0] - oldPosition[0], oldPosition[1], newPosition[1] - oldPosition[2]]);
-        // console.log(newPosition);
         const T = 1/this.v;
         this.orbitComplete = (time*60 - T*Math.floor(time*60/T))*this.v;
 
     }
 
     get pos() {
-        return this.sphere.position
+        return this.sphere.position;
     }
 
     set pos(vec) {
-        this.sphere.position.x = vec.x
-        this.sphere.position.y = vec.y
-        this.sphere.position.z = vec.z
+        this.sphere.position.copy(vec);
     }
 
 }
