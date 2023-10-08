@@ -5,6 +5,7 @@ import { SolarSystem } from './solar_system.js';
 import { Planet } from './planet.js';
 import { Satellite } from './satellite_class.js';
 import { Vector3 } from "three";
+import { BasicOrbit } from './basic_orbit.js';
 
 import { GUI } from 'dat.gui';
 import { Trail } from "./trail.js";
@@ -109,8 +110,8 @@ const main = async function() {
 	camera.position.z = 10;
 	
 	const planets = [
-		new Planet(scene, 0.7, 2, "resources/textures/mars_texture.jpg"), // mars
-		new Planet(scene, 4.5, 1, "resources/textures/moon_texture.jpg").translate([20, 2, 0]), // moon
+		new Planet(document, scene, new BasicOrbit(scene, 0, 0, 0, 0, 0x000000), "P", 0.7, 2, "resources/textures/mars_texture.jpg", 0), 
+		new Planet(document, scene, new BasicOrbit(scene, 10, 9.9985, 0.33422, 0, 0x00ced1),"L", 4.5, 1, "resources/textures/moon_texture.jpg", 0.1).translate([10, 0, 0]), // moon
 	]
 	
 	const topLight = new THREE.DirectionalLight(0xffffff, 3); // (color, intensity)
@@ -170,8 +171,11 @@ const main = async function() {
    
     setArrowToVel(satellite, arrowHelper)
 		renderer.render(scene, camera);
-	 
-    if (simRunning) {		
+
+    // planets[1].move(deltaTime)
+
+    if (simRunning) {	
+
       updateObjects(satellite, planets, deltaTime)    
       trail.add(satellite.pos.clone())
 
@@ -187,11 +191,9 @@ const main = async function() {
   
     if(changeCamera){
       controls.target = satellite.pos;
-      // changeCamera = !changeCamera;
     }
     else{
       controls.target = planets[0].pos; 
-      // changeCamera = !changeCamera;
     }
 
     controls.update();

@@ -1,8 +1,12 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+import { BasicOrbit } from './basic_orbit.js';
 
 export class Planet{
-    constructor(scene, mass, radius, texturePath){
+    constructor(document, scene, orbit, name, mass, radius, texturePath, v){
 
+        this.name = name
+        this.orbit = orbit
+    
         //initializing material
         this.material = new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load(texturePath)});
             
@@ -12,7 +16,9 @@ export class Planet{
         this.radius = radius
         this.mass = mass
         scene.add( this.sphere );
-
+        
+        this.v = v;
+        this.orbitComplete = 0;
     }
 
     translate(vec){
@@ -22,6 +28,21 @@ export class Planet{
         return this
     }
 
+    getMesh() {
+        return this.sphere;
+    }
+
+    movePlanet(time) {
+
+        let oldPosition = this.getPosition().toArray();
+        // let newPosition = this.orbit.getPoint(this.orbitComplete).toArray();
+        // this.translate([newPosition[0] - oldPosition[0], oldPosition[1], newPosition[1] - oldPosition[2]]);
+        // console.log(newPosition);
+        // const T = 1/this.v;
+        // this.orbitComplete = (time*60 - T*Math.floor(time*60/T))*this.v;
+
+    }
+  
     get pos() {
         return this.sphere.position
     }
