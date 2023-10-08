@@ -32,47 +32,47 @@ export class SolarSystem {
         this.currentPosition = 0;
 
         this.sun = new Planet(document, scene, new BasicOrbit(scene, 0, 0, 0, 0, 0x000000),
-            "Sun", sunRadius, "resources/textures/sun_texture.jpg");
+            "Sun", 1, sunRadius, "resources/textures/sun_texture.jpg");
 	
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 3.87032, 3.78731, 1.59091, 0, 0x9370db),
-                 "Mercury", mercuryRadius, "resources/textures/mercury_texture.jpg", 0.0008)
+                 "Mercury", 1, mercuryRadius, "resources/textures/mercury_texture.jpg", 0.0008)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 7.23262, 7.23244, 0.09358, 0, 0xcd853f),
-                "Venus", venusRadius, "resources/textures/venus_texture.jpg", 0.00065)
+                "Venus", 1, venusRadius, "resources/textures/venus_texture.jpg", 0.00065)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 10, 9.9985, 0.33422, 0, 0x00ced1),
-                "Earth", earthRadius, "resources/textures/earth_texture.jpg", 0.0006)
+                "Earth", 1, earthRadius, "resources/textures/earth_texture.jpg", 0.0006)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 15.2406, 15.17315, 2.8475, 0, 0xff6247),
-                "Mars", marsRadius, "resources/textures/mars_texture.jpg", 0.0005)
+                "Mars", 1, marsRadius, "resources/textures/mars_texture.jpg", 0.0005)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 52.0387, 51.97625, 5.0668, 0, 0xffa07a),
-                "Jupiter", jupiterRadius, "resources/textures/jupiter_texture.jpg", 0.00025)
+                "Jupiter", 1, jupiterRadius, "resources/textures/jupiter_texture.jpg", 0.00025)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 95.72526, 95.5957, 9.9532, 0, 0xffdead),
-                "Saturn", saturnRadius, "resources/textures/saturn_texture.jpg", 0.0002)
+                "Saturn", 1, saturnRadius, "resources/textures/saturn_texture.jpg", 0.0002)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 191.6477, 191.4359, 17.9612, 0, 0x87cefa),
-                "Uranus", uranusRadius, "resources/textures/uranus_texture.jpg", 0.00015)
+                "Uranus", 1, uranusRadius, "resources/textures/uranus_texture.jpg", 0.00015)
         )
         this.planets.push(
             new Planet(
                 document, scene, new BasicOrbit(scene, 301.8048, 301.78972, 5.8689, 0, 0x1e90ff),
-                "Neptune", neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001)
+                "Neptune", 1, neptuneRadius, "resources/textures/neptune_texture.jpg", 0.0001)
         )
     }
 
