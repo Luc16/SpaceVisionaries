@@ -95,7 +95,7 @@ export class SolarSystem {
         )
         this.planets.push(
             new Planet(
-                document, scene, new BasicOrbit(scene, 676.7, 607.086, 298.945, 0, 0xa9a9a9, 44.187*Math.PI/180),
+                document, scene, new BasicOrbit(scene, 676.7, 607.086, 298.945, 0, 0xa9a9a9, -44.187*Math.PI/180),
                 "Eris", 1, erisRadius, "resources/textures/eris_texture.jpg", 0.0002)
         )
     }
