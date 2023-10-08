@@ -16,7 +16,7 @@ import gsap from 'https://cdn.skypack.dev/gsap';
 const main = function () {
 
 	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000);
+	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 2000);
 
 	const BLOOM_SCENE = 1;
 
@@ -82,6 +82,7 @@ const main = function () {
 
 	controls.minDistance = solarSystem.sun.radius*5;
 	controls.enablePan = false;
+	controls.maxDistance = 1000;
 	controls.update();
 
 	const labelRenderer = new CSS2DRenderer();
@@ -96,25 +97,26 @@ const main = function () {
 	controls.listenToKeyEvents(window);
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.1
-
 	
 
 	window.addEventListener('resize', onWindowResize);
 
 	const mouse = new THREE.Vector2();
-	var closest = null;
+	var closest = solarSystem.sun;
+	let range = 2;
 
+	// closest = null
 	document.onmousemove = function (e) {
 		mouse.x = (e.offsetX / window.innerWidth) * 2 - 1;
 		mouse.y = - (e.offsetY / window.innerHeight) * 2 + 1;
 		raycaster.setFromCamera(mouse, camera);
 		const ray = raycaster.ray
 
-		closest = null
 		var closestDist = 1000000;
+		closest = null;
 		for (const planet of solarSystem.getPlanets()) {
 			const dist = ray.distanceSqToPoint(planet.getPosition())
-			if (dist < closestDist && dist < 2) {
+			if (dist < closestDist && dist < range) {
 				closest = planet
 				closestDist = dist
 			} else {
@@ -125,7 +127,7 @@ const main = function () {
 		}
 
 		const dist = ray.distanceSqToPoint(solarSystem.sun.getPosition())
-		if (dist < closestDist && dist < 2) {
+		if (dist < closestDist && dist < range) {
 			closest = solarSystem.sun
 			closestDist = dist
 		} else {
@@ -141,7 +143,7 @@ const main = function () {
 
 	const raycaster = new THREE.Raycaster();
 	const timer = { time: 0, vel: 1, lastVel: 1 };
-
+	let targetName = "";
 
 	document.onclick = function () {
 		if (closest != null) {
@@ -156,42 +158,46 @@ const main = function () {
 				}
 				
 			}
-			
-			controls.target = closest.getPosition();
-			controls.minDistance = closest.radius*5;
-			controls.update();
-
-			//console.log(camera.position)
-			const auxVector = new Vector3(camera.position.x, camera.position.y, camera.position.z)
-			
-			//console.log(auxVector)
-			//console.log(closest.getPosition())
-			auxVector.sub(closest.getPosition());
-			//console.log(auxVector)
-			auxVector.normalize();
-			//console.log(auxVector)
-			//console.log(closest.radius)
-			auxVector.multiplyScalar(closest.radius*3);
-			//console.log(auxVector)
-			const aux = new Vector3(closest.getPosition().x, closest.getPosition().y, closest.getPosition().z); 
-			auxVector.copy(aux.add(auxVector));
-			//console.log(auxVector)
-
-			gsap.to(camera.position, {
-				x: auxVector.x,
-				y: auxVector.y,
-				z: auxVector.z,
-				duration: 1.5,
-				onUpdate: function () {
-					camera.lookAt(closest.getPosition());
-				}
-			})
-
-			controls.update();
-		} else {
-			if (timer.vel == 0) {
-				timer.vel = timer.lastVel;
+			if (targetName != closest.name) {
+				controls.target = closest.getPosition();
+				controls.minDistance = closest.radius*5;
+				controls.update();
+	
+				//console.log(camera.position)
+				const auxVector = new Vector3(camera.position.x, camera.position.y, camera.position.z)
+				
+				//console.log(auxVector)
+				//console.log(closest.getPosition())
+				auxVector.sub(closest.getPosition());
+				//console.log(auxVector)
+				auxVector.normalize();
+				//console.log(auxVector)
+				//console.log(closest.radius)
+				auxVector.multiplyScalar(closest.radius*3);
+				//console.log(auxVector)
+				const aux = new Vector3(closest.getPosition().x, closest.getPosition().y, closest.getPosition().z); 
+				auxVector.copy(aux.add(auxVector));
+				//console.log(auxVector)
+	
+				gsap.to(camera.position, {
+					x: auxVector.x,
+					y: auxVector.y,
+					z: auxVector.z,
+					duration: 1.5,
+					onUpdate: function () {
+						camera.lookAt(closest.getPosition());
+						rangeCalculator();
+					}
+				})
+	
+				controls.update();
+				targetName = closest.name;
 			}
+
+		} else {
+			// if (timer.vel == 0) {
+			// 	timer.vel = timer.lastVel;
+			// }
 			// if ( timer.lastVel == 0 ) {
 			// 	timer.vel = 1
 			// }
@@ -201,19 +207,20 @@ const main = function () {
 
 	}
 
-	// document.onwheel = function() {
-	// 	if (controls.getDistance() > 5) {
-	// 		controls.getDistance()
-	// 	}
-	// }
+	document.onwheel = rangeCalculator;
+
+	function rangeCalculator() {
+		let vec1 = camera.position.clone();
+		let vec2 = controls.target.clone();
+		let norm = vec1.sub(vec2).length();
+		console.log(norm);
+		range = norm*0.1;
+		console.log(`Range: ${range}`);
+	}
 
 	timeSettings.add(timer, "time", 0, 1000, 0.01).name("time").listen()
 	timeSettings.add(timer, "vel", 0, 5, 0.01).name("velocity").listen()
 
-	// scene.add( new THREE.AmbientLight( 0xcccccc ) );
-
-	//const pointLight = new THREE.PointLight( 0xffffff, 100 );
-	//camera.add( pointLight );
 
 
 	var then = 0;
@@ -232,6 +239,8 @@ const main = function () {
 		if (timer.time) {
 			solarSystem.move(timer.time);
 		}
+
+		controls.update();
 
 		labelRenderer.render(scene, camera);
 
