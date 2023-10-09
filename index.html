@@ -46,7 +46,65 @@
 			.nav div.logo a:hover {
 				color: #a9a9a9;
 			}
-
+			#gameCanvas {
+				position: relative;
+			  }
+			#insideText {
+				position: absolute;
+				left: 80%;
+				top: 60%;
+				color: #fff;
+				font-size: xx-large;
+			}
+			.overlay {
+				box-shadow: 0px 0px 1px 100vmax rgba(0,0,0,0.5);
+				color: pink;
+			}
+			.description {
+				width: 20%;
+				margin: 2%;
+				margin-top: 5%;
+				padding: 5px;
+				background-color: rgba(0, 0, 0, 0.6);
+				color: whitesmoke;
+				position: absolute;
+				font-family: 'Space Mono', monospace;
+				text-align: justify;
+				
+			}
+			#div2 {
+				padding-left: 6%;
+				padding-right: 6%;
+			}
+			#title_box {
+				padding-left: 6%;
+				padding-right: 6%;
+				display: flex;
+				justify-content: space-between;
+			}
+			.close {
+				right: 32px;
+				top: 0px;
+				width: 32px;
+				height: 32px;
+				opacity: 0.3;
+			}
+			.close:hover {
+				opacity: 1;
+			}
+			.close:before, .close:after {
+				left: 15px;
+				content: ' ';
+				height: 33px;
+				width: 2px;
+				background-color: #333;
+			}
+			.close:before {
+				transform: rotate(45deg);
+			}
+			.close:after {
+				transform: rotate(-45deg);
+			}
 
 		</style>
 	</head>
@@ -54,18 +112,32 @@
 		<nav class="nav">
 			<div class="container">
 				<div class="logo">
-					<a href="#">Traveling the Orbits</a>
+					<a href="#" onclick='document.getElementById("desc_box").hidden = ""'>Traveling the Orbits</a>
 				</div>
-				
-				<span class="navTrigger">
-					<i></i>
-					<i></i>
-					<i></i>
-				</span>
 			</div>
 		</nav>
 
 		<div id="gui_container"></div>
+		<div id='gameCanvas'>
+			<aside class="description" id="desc_box">
+				<div id="title_box">
+					<h2> DESCRIPTION </h2>
+					<button class="close" onclick='this.parentNode.parentNode.hidden = "hidden"; return false;' >X</button>
+				</div>
+				<div id="div2">
+					Welcome to Traveling The Orbits! To start playing with the simulation, click on	Galactic Travel, choose a preset (GA stands for Gravity Assist) or setup the satellite's initial
+					parameters and then click launch. You can click and drag to adjust the camera along the focused element and use the mouse wheel to adjust zoom.
+					During Galactic Travel, you can switch between focusing on the satellite or the Earth. Finally, You are able to change the parameters of time passing:
+					choose a different time point or rather the time's passing velocity.
+					<br>
+					
+					<br>
+					You're all set, happy traveling!
+				</div>
+				
+			</aside>
+
+		</div>
 		<script type="module" src="./main.js"></script>
 	</body>
 </html>

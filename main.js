@@ -75,6 +75,8 @@ function createGuiAndRenderer() {
 	bloomLayer.set( BLOOM_SCENE );
 
 	const renderer = new THREE.WebGLRenderer();
+	document.querySelector('#gameCanvas').appendChild(renderer.domElement);
+
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setPixelRatio(window.devicePixelRatio);
 	document.body.appendChild(renderer.domElement);
@@ -98,7 +100,7 @@ function applyInitialParams(camera, controler, sun, earth) {
 	controler.listenToKeyEvents(window);
 	controler.enableDamping = true;
 	controler.dampingFactor = 0.1
-	controler.maxDistance = 1000;
+	controler.maxDistance = 2000;
 	controler.target = earth.pos
 	controler.update();
 
@@ -163,7 +165,7 @@ const main = async function () {
 	};
 
 	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 2000);
+	const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 3000);
 
 	const [renderer, gui] = createGuiAndRenderer()
 
@@ -251,7 +253,7 @@ const main = async function () {
 				satellite.resetVel = satellite.vel.clone()
 				modeController.travelModeRunning = true 
 				timer.vel = 1
-				console.log(`[${satellite.pos.x}, ${satellite.pos.y}, ${satellite.pos.z}, ${satellite.vel.x}, ${satellite.vel.y}, ${satellite.vel.z}, ${timer.time}]`);
+				// console.log(`[${satellite.pos.x}, ${satellite.pos.y}, ${satellite.pos.z}, ${satellite.vel.x}, ${satellite.vel.y}, ${satellite.vel.z}, ${timer.time}]`);
 			}
 			
 		},
@@ -277,10 +279,17 @@ const main = async function () {
 	satSettings.add(buttons, "satCam").name("Switch to Satellite View")
 	satSettings.add(buttons, "earthCam").name("Switch to Earth View")
 
-	satSettings.add(generalControls, "preset", {
-		"Default": [10.246809049864057, 1.1937240000000011, 4.896345408993087, 0, -0.1, 0, -1],
-		// "Pass By Jupter": [4.6656275437475365, 1.193724000000002, 9.49357137884307, 1.9208, -5, 0, 564.83], 
-		// "Earth Loop": [0, -7.2956900000000005, 0, 1.53184],
+	const presetSelector = satSettings.add(generalControls, "preset", {
+		"Default": [3.2328387056557553, 1.1937240000000022, 9.85211694139966, 0, 5.878500000000001, 0, 6.2116785000000005],
+		"Pass By Jupiter": [-2.021128339438988, 1.193724000000002, 9.347612864810039, 27.2562, 9.9802, 9.472100000000001, 8.559918199999997], 
+		"GA on Saturn": [11.526917894518315, 1.193724, -0.14323023733115978, 50, 7.4019, 4.0174, 83.27830549999999],
+		"Crash with Mars": [-4.752302894710143, 1.1937240000000018, 7.7807668487346024, -26.079700000000003, -1.8921000000000001, -23.604100000000003, 482.17783999999915],
+		"Crash with Mercury": [-7.397484455156295, 1.193723999999999, -4.50894958182004, 48.861900000000006, -12.905000000000001, 50, 571.5294155000013], 
+		"GA on Uranus": [-2.057544383162217, 1.193724000000002, 9.333709430501823, -25.703400000000002, 8.5645, 75, 703.0350093900004],
+		"Double GA": [11.329370589492553, 1.1937240000000005, 1.9826389707195744, 75, -1.5889, -0.31970000000000004, 1000.9074545000001], 
+		"Crash with Saturn": [6.574269213901129, 1.193724000000002, 8.632047447275971, 75, 11.1029, 35.217400000000005, 1004.6308958400011], 
+		"GA on Ceres": [10.96407028527316, 1.1937240000000007, 3.310020108511075, 12.4213, 22.6017, 5.6344, 1.5167150000000218],
+
 	})
 	.onFinishChange(
 		function(){
@@ -289,13 +298,11 @@ const main = async function () {
 		}
 	  ).name("Presets")
 
-	satSettings.add(satellite.vel, "x", -5, 5, 0.0001).name("Velocity X").listen()
-	satSettings.add(satellite.vel, "y", -5, 5, 0.0001).name("Velocity Y").listen()
-	satSettings.add(satellite.vel, "z", -5, 5, 0.0001).name("Velocity Z").listen()
 
-	satSettings.add(generalControls, "gravityConstant", -2, 2, 0.0001).name("Gravity Constant").listen()
-
-	
+	const velControl = satSettings.addFolder("Try it yourself");
+	velControl.add(satellite.vel, "x", -75, 75, 0.0001).name("Velocity X").listen()
+	velControl.add(satellite.vel, "y", -75, 75, 0.0001).name("Velocity Y").listen()
+	velControl.add(satellite.vel, "z", -75, 75, 0.0001).name("Velocity Z").listen()	
 
 	// set callbacks
 	window.addEventListener('resize', onWindowResize);
@@ -337,12 +344,25 @@ const main = async function () {
 
 			modeController.prevMode = modeController.overviewMode;
 			if (!modeController.overviewMode) {
-				satellite.vel = satellite.resetVel
 				closest = solarSystem.planets[2] // earth
+				satellite.resetPos = closest.pos.clone().add(new THREE.Vector3(closest.radius*2, closest.radius*2, 0))
+				if (generalControls.preset[6] > 0) {
+					timer.time = generalControls.preset[6]
+
+					satellite.resetPos.x = generalControls.preset[0]
+					satellite.resetPos.y = generalControls.preset[1]
+					satellite.resetPos.z = generalControls.preset[2]
+
+					satellite.pos = satellite.resetPos.clone()
+				}
+				satellite.pos = satellite.resetPos.clone() 
+
+
+				satellite.vel = satellite.resetVel
+				
 				targetName = solarSystem.sun.name
 				zoomIn(12)
-				satellite.resetPos = closest.pos.clone().add(new THREE.Vector3(closest.radius*2, closest.radius*2, 0))
-				satellite.pos = satellite.resetPos.clone() 
+				
 				setArrowToVel(satellite, arrowHelper)
 				satellite.scl = 0.06
 				modeController.travelModeRunning = false
@@ -377,7 +397,6 @@ const main = async function () {
 				document.onmousemove = onMouseMove;
 				document.onclick = onClick;
 				document.onwheel = onWheel
-				generalControls.preset = [10.246809049864057, 1.1937240000000011, 4.896345408993087, 0, -0.1, 0, -1]
 
 			}
 		}

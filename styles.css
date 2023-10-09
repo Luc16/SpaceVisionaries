@@ -22,3 +22,12 @@ header h1 {
     top: 0;
     left: 0;
 }
+
+#gameCanvas {
+    position: relative;
+  }
+#insideText {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
